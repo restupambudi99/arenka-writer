@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
   if (!book) return jsonError("book_not_found", 404);
   const positionRow = await db.prepare("SELECT COALESCE(MAX(position), -1) + 1 AS next FROM chapters WHERE book_id = ? AND owner_id = ?")
     .bind(bookId, ownerId).first<{ next: number }>();
-  const position = Number.isInteger(body.position) ? Number(body.position) : Number(positionRow?.next ?? 0);
+  const position = Number(positionRow?.next ?? 0);
   if (position < 0 || position > 10_000) return jsonError("invalid_position", 400);
   const id = crypto.randomUUID();
   try {
