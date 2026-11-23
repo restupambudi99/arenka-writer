@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "arenka-writer",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-23",
+  "observability": { "enabled": true },
+  "vars": {
+    "AI_BASE_URL": "https://9routers.vpsarenka.site/v1"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "arenka-writer",
+      "database_id": "local-db",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    { "binding": "FILES", "bucket_name": "arenka-writer-files" }
+  ],
+  "secrets": { "required": ["AI_API_KEY", "AI_MODEL"] }
+}
+
