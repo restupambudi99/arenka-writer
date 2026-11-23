@@ -126,7 +126,9 @@ export const POST: APIRoute = async ({ locals, request }) => {
 
   const database = (env as Env).DB;
   const profile = await database.prepare(
-    "SELECT 1 FROM voice_profiles WHERE id = ? AND owner_id = ? AND version = ? AND status = 'ready' LIMIT 1",
+    `SELECT 1 FROM voice_profiles p WHERE p.id = ? AND p.owner_id = ? AND p.version = ? AND p.status = 'ready'
+     AND p.version = (SELECT MAX(latest.version) FROM voice_profiles latest WHERE latest.id = p.id AND latest.owner_id = p.owner_id)
+     LIMIT 1`,
   ).bind(voiceProfileId, ownerId, voiceProfileVersion).first();
   if (!profile) return jsonError("voice_profile_not_found", 404);
   const id = crypto.randomUUID();
