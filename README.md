@@ -1,40 +1,47 @@
 # Arenka Writer
 
-Scaffold awal Cloudflare Workers dengan D1, R2, dan adapter 9routers.
+Scaffold Astro + EmDash pada Cloudflare Workers, dengan D1, R2, dan adapter
+server-side untuk 9routers.
 
-## Isi konfigurasi AI lokal
+## Siapkan AI lokal
 
-1. Buka `.dev.vars` di folder proyek.
-2. Isi `AI_API_KEY` dengan key 9routers dan `AI_MODEL` dengan ID model yang
-   diizinkan untuk key tersebut.
-3. Simpan file. Jangan kirim key lewat chat atau memasukkannya ke file lain.
+Isi `AI_API_KEY` dan `AI_MODEL` di `.dev.vars`, lalu simpan. URL dasar sudah
+diatur di `wrangler.jsonc` ke `https://9routers.vpsarenka.site/v1`.
+`.dev.vars` diabaikan Git. Jangan menaruh key di chat atau commit.
 
-`.dev.vars` sudah diabaikan Git. `.dev.vars.example` adalah template aman.
-Base URL tersimpan sebagai nilai nonrahasia di `wrangler.jsonc`:
-`https://9routers.vpsarenka.site/v1`.
+## Jalankan lokal
 
-Untuk memasang rahasia di Worker produksi setelah akun Cloudflare siap, jalankan
-`npx wrangler secret put AI_API_KEY` dan `npx wrangler secret put AI_MODEL`.
-
-## Pengembangan lokal
+Persyaratan EmDash: Node.js 22.23.4 atau lebih baru.
 
 ```sh
 npm install
-npm run db:migrate:local
 npm run dev
 ```
 
-Endpoint `GET /api/health` hanya memeriksa bahwa Worker merespons. Adapter AI
-berada di `src/ai.ts` dan belum disambungkan ke route publik sebelum
-autentikasi aplikasi tersedia.
+Buka `http://localhost:4321/_emdash/admin` untuk menyelesaikan setup EmDash
+dan membuat passkey admin pertama. Route `GET /api/ai/models` mensyaratkan
+session EmDash; saat dipanggil, route itu meneruskan permintaan katalog model
+ke 9routers. UI buku Arenka belum dibangun.
 
-`wrangler.jsonc` memakai ID D1 lokal sementara. Ganti dengan ID database
-Cloudflare sebelum migrasi remote atau deploy. R2 juga perlu dibuat atau
-diikat ke bucket yang benar di akun Cloudflare.
+## Data buku dan berkas
 
-## Status
+Data domain berada di migrasi `migrations/0001_core.sql` menggunakan binding
+D1 `DB`, dengan tabel yang terpisah dari skema internal EmDash. Berkas
+menggunakan binding R2 `MEDIA`. Migrasi lokal:
 
-- Migrasi inti masih rancangan awal dan belum diterapkan ke Cloudflare.
-- Integrasi CMS Emdash belum ditambahkan karena produknya belum diidentifikasi.
-- Tidak ada rahasia API yang disimpan di repo.
+```sh
+npm run db:migrate:local
+```
 
+Belum ada migrasi remote atau deploy. Buat resource D1/R2 Cloudflare dan
+konfigurasikan binding production sebelum deploy. Simpan API key production
+melalui `wrangler secret put AI_API_KEY`; model menggunakan setting server-side
+`AI_MODEL`.
+
+## Status integrasi AI
+
+- Adapter model mengikuti format OpenAI-compatible (`GET /models`). Kontrak
+  gateway spesifik belum diverifikasi karena tidak ada request eksternal.
+- Endpoint chat belum diekspos. Sebelum aktif, perlu session, validasi, kuota,
+  batas pemakaian, dan ledger.
+- Jawaban AI dirancang sebagai usulan yang ditinjau penulis.
