@@ -32,6 +32,55 @@ belum ditelusuri.
 - Situs menyatakan draf disimpan di browser jika penyimpanan tersedia;
   jawaban baru menggantikan usulan AI untuk jawaban lama.
 
+## Observasi antarmuka produk
+
+Pemetaan lanjutan dari sesi pengguna, 2026-11-23. Hanya kontrol dan pola
+interaksi generik yang dicatat. Tidak menyimpan isi buku, pilihan model,
+status kuota akun, harga akun, atau identitas profil.
+
+- Dashboard memuat aksi cepat untuk membuat buku, mengelola profil suara, dan
+  membuka pengaturan AI. Area karya menampilkan filter aktif/arsip, ringkasan
+  kemajuan, tombol lanjut menulis, dan aksi arsip.
+- Koleksi buku menyediakan pencarian judul, filter aktif/arsip, kartu buku
+  yang membuka workspace, serta aksi arsip per buku. Aksi arsip belum diuji.
+- Profil suara menampilkan versi dan kesiapan, dengan tindakan lihat/edit,
+  duplikasi, hapus, dan buat profil baru. Isi profil tidak dicatat.
+- Pengaturan AI membedakan layanan bawaan berbasis kuota dari provider
+  eksternal berkredensial pengguna. Ada status koneksi, field kredensial,
+  aksi simpan/putuskan, pemilih model default, dan simpan model. Tidak ada
+  kredensial yang dimasukkan atau pengaturan yang disimpan.
+- Wizard buku terdiri dari Jenis & DNA, Orientasi, Ukuran, Detail, dan Sampul
+  & Halaman. Pemilihan jenis dan profil suara mendahului langkah berikutnya;
+  langkah lanjutan tampak terkunci sebelum prasyarat dipenuhi. Tidak ada buku
+  baru dibuat.
+- Paket & pembayaran mengelompokkan akses/kuota, riwayat pesanan, tambahan
+  token atau slot, dan pilihan paket. Tindakan checkout/pembelian tidak
+  dilakukan dan nilai akun tidak disimpan.
+- Tab Preview & unduh memiliki pratinjau seluruh buku, navigasi halaman,
+  pengaturan tata letak, checklist siap terbit, serta aksi PDF. Sebagian tombol
+  ekspor dapat sekaligus mengubah status persetujuan bab; Arenka perlu
+  memisahkan review dan ekspor atau menyatakan efek sampingnya dengan jelas.
+
+## Kebutuhan Arenka: layar dan perilaku
+
+- Dashboard: aksi cepat, daftar karya aktif/arsip, progres, dan lanjutkan
+  menulis. Status kuota ditampilkan tanpa mengunci pembacaan atau penyuntingan
+  manual.
+- Koleksi: pencarian dan filter, kartu buku, serta arsip/pulihkan dengan
+  konfirmasi sesuai sifat pemulihan.
+- Profil suara: daftar versi, status, buat/edit/duplikasi; penghapusan harus
+  menjelaskan dampak pada buku yang sudah memakai profil tersebut.
+- Wizard: simpan draft tahap demi tahap; validasi prasyarat; pilihan ukuran,
+  arah, detail, sampul, tipografi, header, nomor halaman, dan daftar isi.
+- AI: satu gateway server-side, provider/model terpilih eksplisit, status
+  kuota, penanganan error/retry, dan hasil sebagai usulan yang memerlukan
+  tindakan penulis.
+- Ekspor: pratinjau paginasi memakai konfigurasi layout PDF. Review bab dan
+  pembuatan berkas adalah dua aksi terpisah; persetujuan eksplisit diperlukan
+  sebelum status naskah berubah.
+- Paket, transaksi, referral, serta integrasi CMS bukan prasyarat MVP sampai
+  kebutuhan produk dan integrasi terkonfirmasi.
+
 ## Batas bukti
 
 Observasi di atas tidak mengungkap implementasi backend, skema database,
