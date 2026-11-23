@@ -6,14 +6,17 @@ import emdash from "emdash/astro";
 
 export default defineConfig({
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({ imageService: "passthrough" }),
   image: { layout: "constrained", responsiveStyles: true },
   integrations: [
     react(),
     emdash({
       database: d1({ binding: "DB", session: "auto", coalesce: true }),
       storage: r2({ binding: "MEDIA" }),
+      images: false,
+      fonts: false,
     }),
   ],
   devToolbar: { enabled: false },
 });
+
