@@ -1,8 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "arenka-writer",
-  "main": "src/index.ts",
+  "main": "./src/worker.ts",
   "compatibility_date": "2026-11-23",
+  "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
   "vars": {
     "AI_BASE_URL": "https://9routers.vpsarenka.site/v1"
@@ -11,13 +12,18 @@
     {
       "binding": "DB",
       "database_name": "arenka-writer",
-      "database_id": "local-db",
       "migrations_dir": "migrations"
     }
   ],
   "r2_buckets": [
-    { "binding": "FILES", "bucket_name": "arenka-writer-files" }
+    { "binding": "MEDIA", "bucket_name": "arenka-writer-media" }
   ],
+  "durable_objects": {
+    "bindings": [{ "name": "EMDASH_ROOMS", "class_name": "EmDashRoom" }]
+  },
+  "exports": {
+    "EmDashRoom": { "type": "durable-object", "storage": "sqlite" }
+  },
+  "triggers": { "crons": ["* * * * *"] },
   "secrets": { "required": ["AI_API_KEY", "AI_MODEL"] }
 }
-
