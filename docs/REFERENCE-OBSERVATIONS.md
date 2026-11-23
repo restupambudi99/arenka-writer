@@ -74,6 +74,14 @@ nama pemilik, atau isi buku.
   harus disetujui bersama Blueprint sebelum mulai menulis. Bab dapat ditulis
   manual atau lewat chat. Perubahan naskah disebut tersimpan otomatis dan
   versi dapat disetujui.
+- Blueprint yang terbuka memperlihatkan dokumen terstruktur dengan bagian
+  Tesis, Pembaca, Janji ke pembaca, Cakupan, Standar bukti, Perbedaan dari
+  profil suara, dan Yang belum diputuskan penulis. Status persetujuan dan
+  riwayat versi dapat dilihat; riwayat menyediakan perbandingan perubahan.
+- Blueprint memakai editor teks kaya yang sama dengan ribbon tab Beranda,
+  Sisipkan, Referensi, Tinjau, dan AI. Beranda mencakup tipografi, format
+  paragraf, gaya heading, serta undo/redo. Observasi tidak mengaktifkan AI,
+  mengubah teks, atau menavigasi ke Outline.
 - Panel Bagian menunjukkan progres outline, daftar bab, catatan ide, dan
   konsistensi. Konsistensi menyimpan temuan serta catatan fakta/tokoh/detail.
   Pemeriksaan otomatis berjalan saat bab disetujui; tombol pemeriksaan manual
