@@ -83,4 +83,6 @@ Dependency versions are locked in `package-lock.json`; use `npm ci` for repeatab
 - Migrasi `0002_revision_restore.sql` memperluas sumber revisi dan menambah referensi `restored_from_revision_id`.
 
 Layar workspace memuat riwayat bab aktif dan menampilkan snapshot dalam pratinjau terpisah. Pergantian bab menanyakan konfirmasi jika ada perubahan lokal yang belum disimpan.
+- `PUT /api/books/:bookId/chapters/order` menerima seluruh daftar ID bab sebagai urutan tujuan. Server memeriksa bahwa daftar itu tepat berisi bab milik pengguna, lalu mengubah posisi melalui batch D1 dengan posisi sementara agar pertukaran posisi tidak melanggar unique constraint.
+- Workspace menampilkan tombol bab naik/turun, menonaktifkan batas atas/bawah, dan meminta konfirmasi jika ada teks yang belum disimpan sebelum berpindah/menyusun ulang.
 
