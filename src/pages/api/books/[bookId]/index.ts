@@ -15,7 +15,7 @@ export const GET: APIRoute = async ({ locals, params }) => {
   if (!validId(bookId)) return jsonError("book_not_found", 404);
   const db = (env as Env).DB;
   const book = await db.prepare(
-    `SELECT id, kind, title, summary, target_word_count, stage, archived_at, layout_json, created_at, updated_at
+    `SELECT id, kind, title, summary, target_word_count, stage, archived_at, layout_json, wizard_json, created_at, updated_at
      FROM books WHERE id = ? AND owner_id = ? LIMIT 1`,
   ).bind(bookId, ownerId).first<Record<string, unknown>>();
   if (!book) return jsonError("book_not_found", 404);
@@ -32,6 +32,7 @@ export const GET: APIRoute = async ({ locals, params }) => {
       id: book.id, kind: book.kind, title: book.title, summary: book.summary,
       targetWordCount: book.target_word_count, stage: book.stage, archivedAt: book.archived_at,
       layout: JSON.parse(String(book.layout_json)) as BookLayout,
+      wizard: JSON.parse(String(book.wizard_json)) as Record<string, unknown>,
       createdAt: book.created_at, updatedAt: book.updated_at,
     },
     chapters: chapters.results.map((chapter) => ({
@@ -64,6 +65,24 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
     if (typeof body.summary !== "string" || body.summary.trim().length > 4_000) return jsonError("invalid_summary", 400);
     assignments.push("summary = ?"); values.push(body.summary.trim());
   }
+  if (body.kind !== undefined) {
+    if (body.kind !== "fiction" && body.kind !== "nonfiction") return jsonError("invalid_kind", 400);
+    assignments.push("kind = ?"); values.push(body.kind);
+  }
+  if (body.voiceProfileId !== undefined || body.voiceProfileVersion !== undefined) {
+    if (typeof body.voiceProfileId !== "string" || !/^[a-zA-Z0-9_-]{1,80}$/.test(body.voiceProfileId)
+      || !Number.isInteger(body.voiceProfileVersion) || Number(body.voiceProfileVersion) < 1) {
+      return jsonError("invalid_voice_profile", 400);
+    }
+    const profile = await db.prepare(
+      `SELECT 1 FROM voice_profiles p WHERE p.id = ? AND p.owner_id = ? AND p.version = ? AND p.status = 'ready'
+       AND p.version = (SELECT MAX(latest.version) FROM voice_profiles latest WHERE latest.id = p.id AND latest.owner_id = p.owner_id)
+       LIMIT 1`,
+    ).bind(body.voiceProfileId, ownerId, body.voiceProfileVersion).first();
+    if (!profile) return jsonError("voice_profile_not_found", 404);
+    assignments.push("voice_profile_id = ?"); values.push(body.voiceProfileId);
+    assignments.push("voice_profile_version = ?"); values.push(Number(body.voiceProfileVersion));
+  }
   if (body.targetWordCount !== undefined) {
     if (!Number.isInteger(body.targetWordCount) || Number(body.targetWordCount) < 500 || Number(body.targetWordCount) > 1_000_000) return jsonError("invalid_target_word_count", 400);
     assignments.push("target_word_count = ?"); values.push(Number(body.targetWordCount));
@@ -94,6 +113,26 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
     )) return jsonError("invalid_custom_page_size", 400);
     assignments.push("layout_json = ?"); values.push(JSON.stringify(layout as unknown as BookLayout));
   }
+  if (body.wizard !== undefined) {
+    if (!body.wizard || typeof body.wizard !== "object" || Array.isArray(body.wizard)) return jsonError("invalid_wizard", 400);
+    const wizard = body.wizard as Record<string, unknown>;
+    const allowedSections = ["dna", "details", "cover"];
+    if (Object.keys(wizard).some((section) => !allowedSections.includes(section))) return jsonError("invalid_wizard", 400);
+    for (const section of Object.values(wizard)) {
+      if (!section || typeof section !== "object" || Array.isArray(section)) return jsonError("invalid_wizard", 400);
+      const fields = Object.values(section as Record<string, unknown>);
+      if (fields.some((value) => typeof value !== "string" || value.length > 5_000)) return jsonError("invalid_wizard", 400);
+    }
+    const existing = await db.prepare(
+      "SELECT wizard_json FROM books WHERE id = ? AND owner_id = ? LIMIT 1",
+    ).bind(bookId, ownerId).first<{ wizard_json: string }>();
+    if (!existing) return jsonError("book_not_found", 404);
+    let storedWizard: Record<string, unknown> = {};
+    try { storedWizard = JSON.parse(existing.wizard_json) as Record<string, unknown>; } catch { storedWizard = {}; }
+    const serialized = JSON.stringify({ ...storedWizard, ...wizard });
+    if (serialized.length > 20_000) return jsonError("invalid_wizard", 400);
+    assignments.push("wizard_json = ?"); values.push(serialized);
+  }
   if (assignments.length === 0) return jsonError("no_changes", 400);
   assignments.push("updated_at = CURRENT_TIMESTAMP");
   const result = await db.prepare(
@@ -102,4 +141,5 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
   if (!result.meta.changes) return jsonError("book_not_found", 404);
   return privateJson({ ok: true });
 };
+
 
