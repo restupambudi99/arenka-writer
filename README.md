@@ -2,11 +2,19 @@
 
 Scaffold awal Cloudflare Workers dengan D1, R2, dan adapter 9routers.
 
-## Isi konfigurasi lokal
+## Isi konfigurasi AI lokal
 
-Isi `AI_API_KEY` dan `AI_MODEL` di `.dev.vars`. File ini diabaikan Git.
-Base URL sudah diarahkan ke `https://9routers.vpsarenka.site/v1` dan dapat
-diubah di file yang sama bila instalasi gateway memakai alamat lain.
+1. Buka `.dev.vars` di folder proyek.
+2. Isi `AI_API_KEY` dengan key 9routers dan `AI_MODEL` dengan ID model yang
+   diizinkan untuk key tersebut.
+3. Simpan file. Jangan kirim key lewat chat atau memasukkannya ke file lain.
+
+`.dev.vars` sudah diabaikan Git. `.dev.vars.example` adalah template aman.
+Base URL tersimpan sebagai nilai nonrahasia di `wrangler.jsonc`:
+`https://9routers.vpsarenka.site/v1`.
+
+Untuk memasang rahasia di Worker produksi setelah akun Cloudflare siap, jalankan
+`npx wrangler secret put AI_API_KEY` dan `npx wrangler secret put AI_MODEL`.
 
 ## Pengembangan lokal
 
