@@ -18,36 +18,34 @@ Terakhir diperbarui: 2026-11-23
 
 ## Selesai
 
-- [x] Petakan antarmuka referensi: dashboard, buku, profil suara, pengaturan AI, wizard, workspace, paket, dan Preview & unduh.
-- [x] Catat spesifikasi fungsional, observasi referensi, dan rancangan UI orisinal Arenka.
-- [x] Siapkan Astro + EmDash di Cloudflare dengan D1/R2, Durable Object, passkey, health route, dan katalog model terlindungi session.
-- [x] Tambahkan migrasi awal buku, profil suara, bab, revisi, ekspor, dan pemakaian AI.
-- [x] Buat UI koleksi, buat profil suara awal, buat blueprint, workspace bab, dan editor teks sederhana.
-- [x] Tambahkan API buku/bab/revisi manual/profil suara; pemilik selalu dari session EmDash.
-- [x] Tambahkan riwayat revisi, pratinjau snapshot, pulihkan sebagai revisi baru, dan revision cursor untuk mencegah konflik overwrite.
-- [x] Sediakan lockfile; `.dev.vars` tetap lokal dan diabaikan Git.
-- [x] `npm run typecheck` lulus tanpa error/warning/hint.
+- [x] Peta antarmuka referensi dan spesifikasi fitur Arenka orisinal.
+- [x] Scaffold Astro + EmDash Cloudflare, D1/R2, Durable Object, passkey, health route, dan katalog model terlindungi session.
+- [x] Migrasi domain buku, profil suara, bab, revisi, ekspor, dan pemakaian AI.
+- [x] UI koleksi buku, profil suara, pembuatan blueprint, dan workspace naskah.
+- [x] API buku/bab/revisi dengan owner session, validasi, Origin check, dan revision cursor.
+- [x] Riwayat revisi, pratinjau, pemulihan sebagai revisi baru, dan pengurutan bab.
+- [x] Profil suara multi-versi: daftar/detail, pratinjau versi lama, simpan versi baru, dan jumlah buku per versi.
+- [x] `.dev.vars` lokal diabaikan Git; nilai key tidak pernah dikirim ke gateway.
+- [x] `npm run typecheck` lulus tanpa error/warning/hint (24 file).
 - [x] `npm run build` lulus; tersisa peringatan bundle frontend >500 KB.
 
 ## Berikutnya
 
-- [ ] Pastikan migrasi D1 lokal/remote diterapkan berurutan; jangan deploy sampai resource/binding D1, R2, Durable Object dan domain disiapkan.
-- [ ] Lengkapi wizard lima tahap dan edit/versi profil suara.
+- [ ] Lengkapi wizard lima tahap dan duplicate/arsip profil suara.
 - [ ] Lengkapi metadata riwayat revisi dan kontrol penamaan bab.
-- [ ] Rancang kuota, rate limit, dan ledger sebelum mengaktifkan route chat.
-- [ ] Verifikasi kontrak 9routers sebelum request pertama; key tidak pernah dikirim dari browser.
+- [ ] Rancang kuota, rate limit, dan ledger sebelum mengaktifkan chat AI.
+- [ ] Verifikasi kontrak 9routers sebelum request pertama.
 - [ ] Implementasikan Preview/PDF dan unduhan R2.
-- [ ] Pecah bundle besar bila sudah ada layar admin/editor lengkap.
+- [ ] Terapkan migrasi D1 lalu siapkan resource, binding, domain, dan deploy Cloudflare.
+- [ ] Pecah bundle besar setelah UI editor lengkap.
 
 ## Keputusan dan batas
 
-- AI hanya memberi usulan yang ditinjau penulis; tidak menimpa naskah otomatis.
-- Observasi browser tidak membuktikan backend situs referensi.
-- EmDash mengelola admin/session; tabel data buku Arenka terpisah.
-- Mutasi memeriksa origin same-origin; owner diturunkan dari session, bukan body.
-- Pulihkan revisi membuat entri baru dan mempertahankan seluruh riwayat.
-- Belum ada deploy, migrasi Cloudflare, atau request ke 9routers.
+- AI hanya memberi usulan; tidak menimpa naskah otomatis.
+- Browser referensi tidak membuktikan detail backend.
+- EmDash mengelola admin/session; data produk Arenka menggunakan tabel terpisah.
+- Owner selalu dari session, tidak dari request body; mutasi juga cek same-origin.
+- Pulihkan revisi membuat snapshot baru dan mempertahankan versi lama.
+- Belum ada deploy, penerapan migrasi Cloudflare, atau request ke 9routers.
 - Jangan commit `.dev.vars`, `.env`, atau secret lain.
-- [x] Implementasikan urutan bab dengan tombol naik/turun dan batch server-side yang menghindari benturan posisi unik.
-
 
