@@ -10,57 +10,37 @@ Terakhir diperbarui: 2026-11-23
 |---|---|
 | Domain | https://writer.arenka.biz.id |
 | Repo | https://github.com/restupambudi99/arenka-writer |
-| Hosting | Cloudflare Workers |
+| Runtime | Cloudflare Workers + Astro |
 | Database | Cloudflare D1 |
 | Berkas | Cloudflare R2 |
-| CMS | Emdash (identitas/kontrak belum dikonfirmasi) |
+| CMS/auth | EmDash CMS |
 | Gateway AI | https://9routers.vpsarenka.site/v1 |
-
-## Aturan kerja
-
-1. Arenka memakai merek, antarmuka, teks, dan aset orisinal. Gunakan produk
-   referensi hanya untuk mempelajari kemampuan dan alur yang tampak.
-2. Tandai observasi, inferensi, dan kebutuhan Arenka secara terpisah.
-3. Jangan menaruh rahasia di repo; pakai Worker secrets dan `.dev.vars`.
-4. Buat commit kecil per milestone dengan catatan yang memungkinkan agen lain
-   meneruskan pekerjaan.
-5. Spesifikasi fungsional ada di `docs/FUNCTIONAL-SPEC.md`; peta antarmuka
-   referensi ada di `docs/REFERENCE-OBSERVATIONS.md`.
 
 ## Selesai
 
-- [x] Observasi awal onboarding referensi (halaman pertama saja).
-- [x] Peta fitur dashboard, buku, profil suara, pengaturan AI, paket, dan referral.
-- [x] Peta wizard buku hingga sampul, layout halaman, dan daftar isi.
-- [x] Baca workspace, Blueprint, Outline, dan panel Naskah.
-- [x] Catat alur versi naskah, status review, dan kontrol editor kaya.
-- [x] Baca struktur asisten, sumber/riset, konsistensi, ekspor, dan checklist.
-- [x] Petakan pratinjau seluruh buku: sampul, daftar isi tertaut, navigasi halaman, dan efek layout.
-- [x] Pindai tombol dashboard, koleksi buku, profil suara, pengaturan AI, wizard, dan paket; catat pola tanpa menyimpan nilai akun.
-- [x] Catat bahwa aksi PDF di panel preview dapat sekaligus menyetujui bab yang belum disetujui; pisahkan persetujuan dari ekspor di Arenka.
-- [x] Tinjau roadmap dan FAQ publik, pisahkan fitur tersedia vs direncanakan.
-- [x] Susun `docs/DESIGN.md` untuk UI MVP Arenka.
-- [x] Tambahkan tipe domain awal buku, layout, bab, revisi, dan ekspor.
-- [x] Scaffold Workers, binding D1/R2, migrasi awal, dan adapter 9routers server-side.
-- [x] Siapkan template `.dev.vars`; nilai rahasia lokal tidak masuk repo.
+- [x] Peta layar dashboard, buku, profil suara, pengaturan AI, wizard, paket, workspace, dan Preview & unduh.
+- [x] Tulis spesifikasi fungsional, observasi referensi, dan rancangan UI Arenka.
+- [x] Tambahkan tipe domain dan migrasi awal buku/bab/revisi/ekspor/pemakaian AI.
+- [x] Siapkan `.dev.vars` lokal dan template; `.dev.vars` diabaikan Git.
+- [x] Alihkan scaffold ke Astro + EmDash Cloudflare dengan D1 `DB`, R2 `MEDIA`, Durable Object EmDash, dan admin passkey.
+- [x] Tambahkan health route dan route daftar model yang mensyaratkan session EmDash.
+- [x] Verifikasi secara lokal bahwa `AI_API_KEY` dan `AI_MODEL` ada dan rapi, tanpa membaca/menampilkan nilainya.
+- [x] Periksa struktur JSON Wrangler dan package manifest.
 
 ## Berikutnya
 
-- [ ] Penulisan bab memerlukan generasi AI; hasil harus ditinjau penulis
-      sebelum persetujuan. Jangan mengubah atau menyetujui konten tanpa
-      instruksi khusus.
-- [ ] Identifikasi Emdash CMS yang dimaksud.
-- [ ] Verifikasi kontrak 9routers (model, auth, format, streaming).
-- [ ] Putuskan autentikasi sebelum migrasi D1.
-- [x] Tulis `docs/DESIGN.md` untuk antarmuka orisinal Arenka.
-- [ ] Scaffold Workers + aplikasi frontend, D1/R2, dan gateway AI setelah auth, CMS, dan kontrak gateway dipastikan.
-- [ ] Implementasikan modul berdasarkan peta fungsi yang terverifikasi; mulai dari koleksi, wizard draft, dan workspace manual.
-- [ ] Siapkan binding domain produksi setelah aplikasi siap.
+- [ ] Instal dependency dan jalankan scaffold; build/typecheck belum dilakukan.
+- [ ] Verifikasi kontrak 9routers. Belum ada request ke gateway dan key belum dikirim.
+- [ ] Buat UI orisinal Arenka untuk koleksi, wizard, dan workspace.
+- [ ] Buat API buku/revisi dengan kepemilikan ditentukan dari session EmDash.
+- [ ] Rancang validasi, kuota, rate limit, dan ledger sebelum mengaktifkan route chat.
+- [ ] Tentukan onboarding serta role untuk pengguna tambahan.
+- [ ] Terapkan migrasi lokal dan siapkan resource/domain Cloudflare sebelum deploy.
 
 ## Keputusan
 
-- 2026-11-23 — Semua jawaban AI adalah usulan, bukan pengganti otomatis naskah.
-- 2026-11-23 — Jangan menganggap backend Shireen terungkap dari browser.
-- 2026-11-23 — Versi profil suara perlu dicatat untuk keterlacakan bab.
-- 2026-11-23 — Ukur penggunaan token setelah format dan data biaya gateway
-  terverifikasi.
+- Jawaban AI menjadi usulan yang ditinjau penulis.
+- Antarmuka referensi tidak mengungkap backend Shireen.
+- EmDash mengelola admin, session, dan tabel internalnya; data buku memakai tabel terpisah.
+- Route privat mengambil `owner_id` dari session, bukan request body.
+- Jangan commit `.dev.vars`, `.env`, atau rahasia lain.
