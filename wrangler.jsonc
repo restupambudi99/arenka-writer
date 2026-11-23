@@ -27,3 +27,4 @@
   "triggers": { "crons": ["* * * * *"] },
   "secrets": { "required": ["AI_API_KEY", "AI_MODEL"] }
 }
+
