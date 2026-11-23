@@ -51,27 +51,36 @@ export const PUT: APIRoute = async ({ locals, params, request }) => {
   const body = await readJsonObject(request);
   if (!body) return jsonError("invalid_json", 400);
   if (typeof body.content !== "string" || body.content.length > 200_000) return jsonError("invalid_content", 400);
+  if (body.expectedCurrentRevisionId !== null && typeof body.expectedCurrentRevisionId !== "string") {
+    return jsonError("invalid_revision_cursor", 400);
+  }
   const db = (env as Env).DB;
   const chapter = await db.prepare(
     "SELECT id, current_revision_id FROM chapters WHERE id = ? AND book_id = ? AND owner_id = ?",
   ).bind(chapterId, bookId, ownerId).first<{ id: string; current_revision_id: string | null }>();
   if (!chapter) return jsonError("chapter_not_found", 404);
+  if (chapter.current_revision_id !== body.expectedCurrentRevisionId) return jsonError("stale_revision", 409);
   const revisionNumber = await db.prepare(
     "SELECT COALESCE(MAX(revision_number), 0) + 1 AS next FROM chapter_revisions WHERE chapter_id = ? AND owner_id = ?",
   ).bind(chapterId, ownerId).first<{ next: number }>();
   const revisionId = crypto.randomUUID();
   const now = new Date().toISOString();
   try {
-    await db.batch([
+    const batch = await db.batch([
       db.prepare("INSERT INTO chapter_revisions (id, owner_id, chapter_id, revision_number, content, source) VALUES (?, ?, ?, ?, ?, 'manual')")
         .bind(revisionId, ownerId, chapterId, Number(revisionNumber?.next ?? 1), body.content),
-      db.prepare("UPDATE chapters SET current_revision_id = ?, approved_revision_id = NULL, approval_status = 'draft', updated_at = ? WHERE id = ? AND book_id = ? AND owner_id = ?")
-        .bind(revisionId, now, chapterId, bookId, ownerId),
+      db.prepare("UPDATE chapters SET current_revision_id = ?, approved_revision_id = NULL, approval_status = 'draft', updated_at = ? WHERE id = ? AND book_id = ? AND owner_id = ? AND current_revision_id IS ?")
+        .bind(revisionId, now, chapterId, bookId, ownerId, body.expectedCurrentRevisionId),
       db.prepare("UPDATE books SET updated_at = ? WHERE id = ? AND owner_id = ?")
         .bind(now, bookId, ownerId),
     ]);
+    if (!batch[1].meta.changes) {
+      await db.prepare("DELETE FROM chapter_revisions WHERE id = ? AND chapter_id = ? AND owner_id = ?")
+        .bind(revisionId, chapterId, ownerId).run();
+      return jsonError("stale_revision", 409);
+    }
   } catch {
-    return jsonError("revision_save_failed", 500);
+    return jsonError("revision_save_conflict", 409);
   }
   return privateJson({ revisionId, revisionNumber: Number(revisionNumber?.next ?? 1) }, 201);
 };
