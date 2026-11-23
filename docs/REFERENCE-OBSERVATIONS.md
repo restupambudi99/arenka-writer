@@ -78,6 +78,22 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
 - Tidak ada kode referral, URL unik, data rekening, atau status akun tertentu
   yang disimpan di dokumen ini.
 
+### Halaman publik: fitur dan roadmap
+
+- Roadmap memisahkan kemampuan yang ditandai tersedia dari fase yang
+  direncanakan. Kemampuan tersedia yang disebut di sana: pembentukan profil
+  gaya dari contoh tulisan, interviewer proaktif, riset mendalam, pemeriksaan
+  konsistensi, editor split-view, asisten melalui Telegram, dan ekspor PDF.
+- Fase yang ditandai direncanakan: persiapan buku siap terbit, penyusunan
+  paper ilmiah, dan adaptasi cerita menjadi komik. Ini bukan fitur tersedia
+  yang terverifikasi.
+- Halaman publik menyebut split-view sebagai percakapan di satu sisi dan
+  naskah di sisi lain; penulis meninjau, menyunting, dan menyetujui hasil.
+- FAQ publik menyebut pengguna dapat memulai dari ide tanpa draft, naskah
+  tetap dapat diedit, dan pengguna memegang keputusan kreatif.
+- FAQ riset meminta pengguna memeriksa fakta. Profil gaya bukan jaminan
+  bebas plagiarisme; orisinalitas, kutipan, dan sumber tetap perlu ditinjau.
+
 ## Kandidat kebutuhan Arenka
 
 Pola ini dapat dipertimbangkan untuk MVP: dashboard dengan aksi cepat; buku
@@ -89,6 +105,10 @@ Backend, skema data, aturan kuota, penagihan, serta pemrosesan kredensial
 tidak dapat disimpulkan dari antarmuka. Implementasi Arenka harus memakai
 arsitektur dan kontrak sendiri. Peta onboarding profil suara berada di
 `docs/FUNCTIONAL-SPEC.md`.
+
+Roadmap bersifat pernyataan publik dan dapat berubah. Catatan ini tidak
+memverifikasi secara langsung tiap fitur yang disebut tersedia di dalam
+workspace.
 
 ## Batas penelusuran
 
