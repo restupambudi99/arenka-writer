@@ -37,8 +37,10 @@ Terakhir diperbarui: 2026-11-23
 - [x] Baca struktur asisten, sumber/riset, konsistensi, ekspor, dan checklist.
 - [x] Petakan pratinjau seluruh buku: sampul, daftar isi tertaut, navigasi halaman, dan efek layout.
 - [x] Pindai tombol dashboard, koleksi buku, profil suara, pengaturan AI, wizard, dan paket; catat pola tanpa menyimpan nilai akun.
-- [x] Catat bahwa aksi PDF di panel preview dapat sekaligus menyetujui bab yang belum disetujui; jangan gabungkan persetujuan dan ekspor tanpa konfirmasi jelas di Arenka.
+- [x] Catat bahwa aksi PDF di panel preview dapat sekaligus menyetujui bab yang belum disetujui; pisahkan persetujuan dari ekspor di Arenka.
 - [x] Tinjau roadmap dan FAQ publik, pisahkan fitur tersedia vs direncanakan.
+- [x] Susun `docs/DESIGN.md` untuk UI MVP Arenka.
+- [x] Tambahkan tipe domain awal buku, layout, bab, revisi, dan ekspor.
 
 ## Berikutnya
 
