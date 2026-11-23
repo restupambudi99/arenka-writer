@@ -32,13 +32,15 @@ Terakhir diperbarui: 2026-11-23
 - [x] Observasi awal onboarding referensi (halaman pertama saja).
 - [x] Peta fitur dashboard, buku, profil suara, pengaturan AI, paket, dan referral.
 - [x] Peta wizard buku hingga sampul, layout halaman, dan daftar isi.
+- [x] Tinjau roadmap dan FAQ publik, pisahkan fitur tersedia vs direncanakan.
 - [x] Catat batas bukti dan kebutuhan Arenka di spesifikasi v0.2.
 - [x] Pastikan repo GitHub tersedia, kosong, dan akun memiliki hak push.
 
 ## Berikutnya
 
-- [ ] Editor buku belum dipetakan; jangan membuat workspace pada akun utama.
-      Gunakan demo publik atau akun uji jika tersedia.
+- [ ] Editor buku belum dapat diamati: workspace perlu dibuat untuk masuk.
+      Demo publik belum ditemukan. Gunakan akun uji yang memang disediakan;
+      jangan membuat buku di akun utama untuk inspeksi.
 - [ ] Identifikasi Emdash CMS yang dimaksud.
 - [ ] Verifikasi kontrak 9routers (model, auth, format, streaming).
 - [ ] Putuskan autentikasi sebelum migrasi D1.
