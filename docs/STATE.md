@@ -35,6 +35,8 @@ Terakhir diperbarui: 2026-11-23
 - [x] Baca workspace, Blueprint, Outline, dan panel Naskah.
 - [x] Catat alur versi naskah, status review, dan kontrol editor kaya.
 - [x] Baca struktur asisten, sumber/riset, konsistensi, ekspor, dan checklist.
+- [x] Petakan pratinjau seluruh buku: sampul, daftar isi tertaut, navigasi halaman, dan efek layout.
+- [x] Catat bahwa aksi PDF di panel preview dapat sekaligus menyetujui bab yang belum disetujui; jangan gabungkan persetujuan dan ekspor tanpa konfirmasi jelas di Arenka.
 - [x] Tinjau roadmap dan FAQ publik, pisahkan fitur tersedia vs direncanakan.
 
 ## Berikutnya
