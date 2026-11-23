@@ -4,5 +4,11 @@
 node_modules/
 .wrangler/
 dist/
+.astro/
+.emdash/migrations.json
 .env
-
+.env.*
+!.env.example
+uploads/
+data.db
+data.db-*
