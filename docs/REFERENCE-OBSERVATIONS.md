@@ -47,6 +47,18 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
   Ukuran, Detail, serta Sampul & Halaman.
 - Pilihan jenis buku (fiksi/nonfiksi) dan profil suara menjadi prasyarat
   sebelum melanjutkan.
+- Orientasi menyediakan Potret dan Lanskap; ukuran menyediakan A4, A5,
+  B5, B6, dan ukuran kustom. A5 tampak sebagai nilai awal.
+- Detail buku meminta judul sementara, ringkasan/tujuan (batas 5.000
+  karakter), dan target kata (nilai awal yang tampil 30.000).
+- Tahap Sampul & Halaman memiliki tab Sampul, Halaman, dan Daftar Isi.
+  Sampul mendukung gambar opsional atau gambar yang sudah memuat teks,
+  subjudul, ISBN opsional, dedikasi opsional, serta pratinjau langsung.
+- Tab Halaman memuat pilihan font naskah dan heading, ukuran teks, huruf awal
+  bab, inden paragraf, header, dan beberapa format nomor halaman.
+- Daftar Isi dijelaskan dibuat otomatis dari bab dan nomor mengikuti layout
+  ekspor tanpa AI. Gaya nomor halaman daftar isi dapat dipilih.
+- Tombol akhir membuat workspace buku; tombol tersebut tidak ditekan.
 
 ### Paket dan pembayaran
 
@@ -77,3 +89,9 @@ Backend, skema data, aturan kuota, penagihan, serta pemrosesan kredensial
 tidak dapat disimpulkan dari antarmuka. Implementasi Arenka harus memakai
 arsitektur dan kontrak sendiri. Peta onboarding profil suara berada di
 `docs/FUNCTIONAL-SPEC.md`.
+
+## Batas penelusuran
+
+Editor buku belum diamati karena masuk ke dalamnya memerlukan pembuatan
+workspace. Jangan membuat data di akun referensi untuk meneruskan inspeksi;
+gunakan demo publik atau akun pengujian yang disediakan khusus bila tersedia.
