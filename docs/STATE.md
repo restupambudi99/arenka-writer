@@ -33,7 +33,7 @@ Terakhir diperbarui: 2026-11-23
 
 - [ ] Pastikan migrasi D1 lokal/remote diterapkan berurutan; jangan deploy sampai resource/binding D1, R2, Durable Object dan domain disiapkan.
 - [ ] Lengkapi wizard lima tahap dan edit/versi profil suara.
-- [ ] Buat struktur outline dapat diurutkan dan riwayat revisi dengan metadata yang lebih lengkap.
+- [ ] Lengkapi metadata riwayat revisi dan kontrol penamaan bab.
 - [ ] Rancang kuota, rate limit, dan ledger sebelum mengaktifkan route chat.
 - [ ] Verifikasi kontrak 9routers sebelum request pertama; key tidak pernah dikirim dari browser.
 - [ ] Implementasikan Preview/PDF dan unduhan R2.
@@ -48,4 +48,6 @@ Terakhir diperbarui: 2026-11-23
 - Pulihkan revisi membuat entri baru dan mempertahankan seluruh riwayat.
 - Belum ada deploy, migrasi Cloudflare, atau request ke 9routers.
 - Jangan commit `.dev.vars`, `.env`, atau secret lain.
+- [x] Implementasikan urutan bab dengan tombol naik/turun dan batch server-side yang menghindari benturan posisi unik.
+
 
