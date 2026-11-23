@@ -15,6 +15,7 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
   atau mengatur asisten AI.
 - Area koleksi mendukung status aktif/arsip dan memiliki empty state.
 - Terdapat ringkasan akses/paket dan tautan komunitas.
+- Panel karya aktif menampilkan progres, status, aksi lanjut menulis, serta pengarsipan per buku.
 
 ### Daftar buku
 
@@ -31,6 +32,7 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
   ekspresi, dan batas tulisan.
 - UI menyediakan aksi untuk melihat/mengedit, menggandakan, menghapus, dan
   membuat profil.
+- Halaman profil menampilkan versi dan status kesiapan.
 
 ### Pengaturan AI
 
@@ -39,6 +41,7 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
 - Layar membedakan cara kuota/pembayaran untuk provider bawaan dan provider
   eksternal, menyediakan input kredensial provider, serta pemilih model utama.
 - Simpan pengaturan dilakukan melalui aksi eksplisit.
+- Kontrol yang tampak mencakup status koneksi, simpan/putuskan kredensial, pemilih model utama, dan aksi simpan model.
 
 ### Pembuatan buku
 
@@ -47,6 +50,7 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
   Ukuran, Detail, serta Sampul & Halaman.
 - Pilihan jenis buku (fiksi/nonfiksi) dan profil suara menjadi prasyarat
   sebelum melanjutkan.
+- Langkah berikutnya tampak terkunci sebelum jenis dan profil suara dipilih.
 - Orientasi menyediakan Potret dan Lanskap; ukuran menyediakan A4, A5,
   B5, B6, dan ukuran kustom. A5 tampak sebagai nilai awal.
 - Detail buku meminta judul sementara, ringkasan/tujuan (batas 5.000
@@ -128,6 +132,8 @@ kontrol dan alur, tanpa menyimpan judul, sinopsis, nama pemilik, atau isi buku.
 - Paket dapat mengatur durasi, buku/profil, kuota AI, riset, dan ekspor.
   Angka atau harga yang muncul dapat berubah menurut akun dan waktu; Arenka
   perlu menentukan model bisnisnya sendiri.
+- Layar merangkum akses/kuota, riwayat pesanan, tambahan token/slot, dan
+  pilihan paket. Checkout dan pembelian tidak dilakukan.
 
 ### Referral
 
