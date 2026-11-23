@@ -97,3 +97,23 @@ Implementasi kode menunggu keputusan autentikasi, identitas Emdash CMS, dan
 kontrak 9routers. Komponen inti buku/editor dapat dibangun setelah ketiganya
 dipastikan; jangan mengarang API CMS atau mengirim kredensial ke browser.
 
+## Implementasi MVP awal
+
+Layar `/` menampilkan koleksi aktif/arsip dengan pencarian. `/books/new`
+meminta judul, jenis, target kata, dan profil suara siap. `/books/:id` memberi
+outline bab, editor teks sederhana, serta simpan revisi manual. Profil suara
+awal dapat dibuat lewat `/voices/new`.
+
+API buku, bab, revisi, dan profil memakai `locals.user.id` sebagai owner.
+Mutasi memeriksa `Origin`, validasi bentuk/ukuran JSON, dan membatasi query
+berdasarkan owner pada D1. Konten bab baru disimpan sebagai revisi; penyimpanan
+baru menghapus approval revision terdahulu agar status tidak tetap disetujui
+setelah teks berubah.
+
+## Batas implementasi saat ini
+
+Implementasi sekarang belum mencakup wizard lima langkah penuh, rich text,
+riwayat revisi yang dapat dibuka, drag-and-drop urutan bab, profil suara multi-
+versi/edit, pembuatan naskah AI, Preview/PDF, atau pengaturan model UI. Semua
+perubahan antarmuka memakai komponen dan copy Arenka sendiri.
+
