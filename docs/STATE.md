@@ -18,39 +18,34 @@ Terakhir diperbarui: 2026-11-23
 
 ## Selesai
 
-- [x] Petakan layar referensi dashboard, buku, profil suara, pengaturan AI, wizard, workspace, paket, Preview & unduh.
-- [x] Tulis spesifikasi fungsional, observasi referensi, dan rancangan antarmuka orisinal.
-- [x] Tambahkan domain awal dan migrasi D1 buku, bab, revisi, ekspor, serta ledger penggunaan.
-- [x] Siapkan `.dev.vars` lokal dan template; file secret diabaikan Git.
-- [x] Scaffold Astro + EmDash Cloudflare dengan D1 `DB`, R2 `MEDIA`, Durable Object, admin passkey, health route, dan katalog model terlindungi session.
-- [x] Implementasikan API buku, profil suara, bab, revisi manual, validasi input, batas ukuran body, pembatasan owner/session, same-origin mutations, serta no-store responses.
-- [x] Implementasikan koleksi responsif, pembuatan profil suara awal, pembuatan blueprint, dan workspace editor teks sederhana.
-- [x] Cek format AI_API_KEY/AI_MODEL tanpa membaca nilainya; secret tidak pernah dikirim ke gateway.
+- [x] Petakan antarmuka referensi: dashboard, buku, profil suara, pengaturan AI, wizard, workspace, paket, dan Preview & unduh.
+- [x] Catat spesifikasi fungsional, observasi referensi, dan rancangan UI orisinal Arenka.
+- [x] Siapkan Astro + EmDash di Cloudflare dengan D1/R2, Durable Object, passkey, health route, dan katalog model terlindungi session.
+- [x] Tambahkan migrasi awal buku, profil suara, bab, revisi, ekspor, dan pemakaian AI.
+- [x] Buat UI koleksi, buat profil suara awal, buat blueprint, workspace bab, dan editor teks sederhana.
+- [x] Tambahkan API buku/bab/revisi manual/profil suara; pemilik selalu dari session EmDash.
+- [x] Tambahkan riwayat revisi, pratinjau snapshot, pulihkan sebagai revisi baru, dan revision cursor untuk mencegah konflik overwrite.
+- [x] Sediakan lockfile; `.dev.vars` tetap lokal dan diabaikan Git.
+- [x] `npm run typecheck` lulus tanpa error/warning/hint.
+- [x] `npm run build` lulus; tersisa peringatan bundle frontend >500 KB.
 
 ## Berikutnya
 
-- [ ] Selesaikan `npm install`; percobaan pertama terhenti pada cache profil Windows, percobaan cache lokal lambat dan dihentikan.
-- [ ] Jalankan `astro check` dan `astro build`; belum ada hasil runtime.
-- [ ] Cocokkan format API 9routers setelah disetujui untuk request; jangan mengirim data naskah tanpa tindakan pengguna.
-- [ ] Lengkapi wizard lima tahap, edit/versi profil suara, riwayat revisi, dan pengurutan bab.
-- [ ] Tambahkan validasi konflik revisi/urutan yang atomik.
-- [ ] Rancang kuota, rate limit, dan ledger sebelum route chat diaktifkan.
+- [ ] Pastikan migrasi D1 lokal/remote diterapkan berurutan; jangan deploy sampai resource/binding D1, R2, Durable Object dan domain disiapkan.
+- [ ] Lengkapi wizard lima tahap dan edit/versi profil suara.
+- [ ] Buat struktur outline dapat diurutkan dan riwayat revisi dengan metadata yang lebih lengkap.
+- [ ] Rancang kuota, rate limit, dan ledger sebelum mengaktifkan route chat.
+- [ ] Verifikasi kontrak 9routers sebelum request pertama; key tidak pernah dikirim dari browser.
 - [ ] Implementasikan Preview/PDF dan unduhan R2.
-- [ ] Siapkan resource D1/R2/domain Cloudflare setelah build dan pemeriksaan berhasil.
+- [ ] Pecah bundle besar bila sudah ada layar admin/editor lengkap.
 
-## Keputusan
+## Keputusan dan batas
 
-- AI memberi usulan yang ditinjau penulis; tidak menimpa naskah otomatis.
-- Antarmuka situs referensi tidak membuktikan detail backend-nya.
-- EmDash mengelola admin/session dan skema CMS; data buku memakai tabel terpisah.
-- Owner API selalu diambil dari session EmDash, bukan request body.
-- Mutasi yang memakai cookie session memerlukan Origin same-origin.
-- Jangan commit `.dev.vars`, `.env`, atau rahasia lain.
-- TypeScript/Astro check: lulus, 18 file checked, 0 error/warning/hint.
-- Production Astro build: lulus. Ada peringatan ukuran chunk frontend di atas 500 KB.
-- EmDash memakai Noto Sans default; build online bisa mengambil font saat build. `fonts: false` diatur agar build terisolasi tidak membutuhkan akses Google Fonts.
-Pemeriksaan lokal terbaru: `npm run typecheck` lulus tanpa error/warning/hint;
-`npm run build` lulus dengan peringatan ukuran chunk frontend >500 KB. Binding
-Astro Sessions `SESSION` dapat diprovision otomatis Cloudflare saat deployment;
-EmDash tetap mengelola autentikasi aplikasi. Belum ada deploy atau request AI.
+- AI hanya memberi usulan yang ditinjau penulis; tidak menimpa naskah otomatis.
+- Observasi browser tidak membuktikan backend situs referensi.
+- EmDash mengelola admin/session; tabel data buku Arenka terpisah.
+- Mutasi memeriksa origin same-origin; owner diturunkan dari session, bukan body.
+- Pulihkan revisi membuat entri baru dan mempertahankan seluruh riwayat.
+- Belum ada deploy, migrasi Cloudflare, atau request ke 9routers.
+- Jangan commit `.dev.vars`, `.env`, atau secret lain.
 
