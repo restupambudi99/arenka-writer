@@ -1,17 +1,18 @@
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
+import { authenticatedOwner, jsonError } from "../../../lib/api";
 import { requestModelCatalog } from "../../../ai";
 import type { Env } from "../../../env";
 
+export const prerender = false;
+
 export const GET: APIRoute = async ({ locals }) => {
-  if (!locals.user?.id) {
-    return Response.json({ error: "not_authenticated" }, { status: 401 });
-  }
+  if (!authenticatedOwner(locals)) return jsonError("not_authenticated", 401);
 
   try {
     const upstream = await requestModelCatalog(env as Env);
     if (!upstream.ok) {
-      return Response.json({ error: "model_catalog_unavailable" }, { status: 502 });
+      return jsonError("model_catalog_unavailable", 502);
     }
     const payload = (await upstream.json()) as { data?: Array<{ id?: unknown }> };
     const models = Array.isArray(payload.data)
@@ -21,6 +22,7 @@ export const GET: APIRoute = async ({ locals }) => {
       : [];
     return Response.json({ models }, { headers: { "Cache-Control": "private, no-store" } });
   } catch {
-    return Response.json({ error: "model_catalog_unavailable" }, { status: 502 });
+    return jsonError("model_catalog_unavailable", 502);
   }
 };
+
