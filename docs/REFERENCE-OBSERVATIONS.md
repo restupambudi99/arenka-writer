@@ -62,9 +62,8 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
 
 ### Workspace buku
 
-Workspace yang diberikan pengguna dapat diamati dalam keadaan tanpa bab.
-Catatan berikut merangkum kontrol dan alur, tanpa menyimpan judul, sinopsis,
-nama pemilik, atau isi buku.
+Workspace yang diberikan pengguna dapat diamati. Catatan berikut merangkum
+kontrol dan alur, tanpa menyimpan judul, sinopsis, nama pemilik, atau isi buku.
 
 - Header menyediakan kembali ke koleksi, panduan menulis, pengaturan buku,
   arsip, tampilan baca penuh, dan unduh.
@@ -74,14 +73,20 @@ nama pemilik, atau isi buku.
   harus disetujui bersama Blueprint sebelum mulai menulis. Bab dapat ditulis
   manual atau lewat chat. Perubahan naskah disebut tersimpan otomatis dan
   versi dapat disetujui.
-- Blueprint yang terbuka memperlihatkan dokumen terstruktur dengan bagian
-  Tesis, Pembaca, Janji ke pembaca, Cakupan, Standar bukti, Perbedaan dari
-  profil suara, dan Yang belum diputuskan penulis. Status persetujuan dan
-  riwayat versi dapat dilihat; riwayat menyediakan perbandingan perubahan.
-- Blueprint memakai editor teks kaya yang sama dengan ribbon tab Beranda,
+- Blueprint memakai dokumen terstruktur dengan bagian Tesis, Pembaca, Janji
+  ke pembaca, Cakupan, Standar bukti, Perbedaan dari profil suara, dan Yang
+  belum diputuskan penulis. Status persetujuan dan riwayat versi dapat
+  dilihat; riwayat menyediakan perbandingan perubahan.
+- Blueprint dan naskah memakai editor teks kaya dengan ribbon tab Beranda,
   Sisipkan, Referensi, Tinjau, dan AI. Beranda mencakup tipografi, format
-  paragraf, gaya heading, serta undo/redo. Observasi tidak mengaktifkan AI,
-  mengubah teks, atau menavigasi ke Outline.
+  paragraf, gaya heading, serta undo/redo. AI tidak dijalankan saat inspeksi
+  Blueprint.
+- Naskah memakai kontrol tipografi, paragraf, gaya judul bab, pencarian,
+  pemilih halaman, hitungan kata, dan status simpan.
+- Hasil penulisan yang dikirim ke dokumen disimpan sebagai versi baru dan
+  menunggu tinjauan. Ada aksi eksplisit untuk menyetujui versi serta membuka
+  bab berikutnya. Pengaturan persetujuan membedakan tinjau manual dari
+  persetujuan otomatis; mode otomatis dapat melewati pemeriksaan penulis.
 - Panel Bagian menunjukkan progres outline, daftar bab, catatan ide, dan
   konsistensi. Konsistensi menyimpan temuan serta catatan fakta/tokoh/detail.
   Pemeriksaan otomatis berjalan saat bab disetujui; tombol pemeriksaan manual
@@ -95,7 +100,7 @@ nama pemilik, atau isi buku.
   Daftar pustaka dibuat dari sitasi yang disisipkan lewat toolbar.
 - Tab Asisten menyediakan sesi/riwayat percakapan, informasi konteks buku,
   sesi baru, mode Penulis dan Riset, pemilih model, input instruksi, serta
-  penambahan gambar/referensi. Tidak ada prompt dikirim saat observasi.
+  penambahan gambar/referensi.
 - Preview & unduh memisahkan pratinjau, tata letak, hasil ekspor PDF, dan
   checklist siap terbit. PDF final nonaktif saat belum ada bab.
 - Checklist mencakup status penulisan/persetujuan bab, judul bab, temuan
@@ -105,8 +110,7 @@ nama pemilik, atau isi buku.
   pihak ketiga, sinopsis belakang, dan ISBN bila diperlukan.
 - Pengaturan layout mencakup ukuran/arah halaman, target kata, sampul,
   tipografi/heading, header, penomoran, dan daftar isi dengan pratinjau.
-  Simpan pengaturan, unggah, buat/arsipkan/hapus, persetujuan bab, jalankan AI,
-  dan ekspor tidak dilakukan.
+  Inspeksi tidak mengedit, menyetujui, mengunggah, menjalankan AI, atau ekspor.
 
 ### Paket dan pembayaran
 
@@ -157,11 +161,3 @@ arsitektur dan kontrak sendiri. Peta onboarding profil suara berada di
 Roadmap bersifat pernyataan publik dan dapat berubah. Catatan ini tidak
 memverifikasi secara langsung tiap fitur yang disebut tersedia di dalam
 workspace.
-
-## Batas penelusuran
-
-Editor utama dan seluruh alur AI belum diamati secara interaktif. Jangan
-mengirim prompt, mengunggah berkas, menyetujui bab, atau menambah/menghapus
-konten pada akun referensi untuk meneruskan inspeksi. Alur AI memerlukan
-permintaan eksplisit dan perubahan workspace; gunakan akun uji untuk tahap
-tersebut bila tersedia.
