@@ -14,7 +14,7 @@ diatur di `wrangler.jsonc` ke `https://9routers.vpsarenka.site/v1`.
 Persyaratan EmDash: Node.js 22.23.4 atau lebih baru.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
@@ -45,3 +45,33 @@ melalui `wrangler secret put AI_API_KEY`; model menggunakan setting server-side
 - Endpoint chat belum diekspos. Sebelum aktif, perlu session, validasi, kuota,
   batas pemakaian, dan ledger.
 - Jawaban AI dirancang sebagai usulan yang ditinjau penulis.
+## API buku
+
+Semua route privat membaca ID pemilik dari session EmDash. Mutasi mensyaratkan
+Origin sama dengan origin request, JSON maksimal 256 KB, dan respons pribadi
+ditandai no-store.
+
+- `GET /api/books?status=active|archived|all&q=&cursor=` — daftar terfilter dan
+  berpaginasi.
+- `POST /api/books` — buat blueprint setelah profil suara siap milik pengguna
+  diverifikasi.
+- `GET /api/books/:bookId` — detail buku dan bab.
+- `PATCH /api/books/:bookId` — ubah metadata, layout, tahap, atau arsip.
+- `POST /api/books/:bookId/chapters` — tambah bab.
+- `PATCH /api/books/:bookId/chapters/:chapterId` — ubah judul, tujuan, posisi.
+- `PUT /api/books/:bookId/chapters/:chapterId` — buat revisi manual baru;
+  perubahan mengosongkan status persetujuan lama.
+- `GET/POST /api/voice-profiles` — daftar profil siap dan buat profil awal.
+
+`/` menampilkan koleksi responsif; `/books/new` membuat blueprint; `/books/:id`
+memungkinkan menambah bab dan menyimpan revisi manual. UI ini belum menggantikan
+wizard lima langkah lengkap, editor rich text, ataupun Preview/PDF.
+
+## Pemeriksaan dan batas
+
+Node dependency install belum berhasil tuntas di workspace ini, jadi Astro
+check/build belum dijalankan. Jangan deploy sebelum check berhasil dan resource
+D1/R2 produksi disiapkan. Kontrak gateway 9routers juga belum dipanggil.
+
+Dependency versions are locked in `package-lock.json`; use `npm ci` for repeatable setup. `astro check` and the production build currently pass. The build emits a frontend chunk size warning (>500 KB), which should be addressed when splitting the admin/editor UI.
+
