@@ -36,6 +36,7 @@ Terakhir diperbarui: 2026-11-23
 - [x] Catat alur versi naskah, status review, dan kontrol editor kaya.
 - [x] Baca struktur asisten, sumber/riset, konsistensi, ekspor, dan checklist.
 - [x] Petakan pratinjau seluruh buku: sampul, daftar isi tertaut, navigasi halaman, dan efek layout.
+- [x] Pindai tombol dashboard, koleksi buku, profil suara, pengaturan AI, wizard, dan paket; catat pola tanpa menyimpan nilai akun.
 - [x] Catat bahwa aksi PDF di panel preview dapat sekaligus menyetujui bab yang belum disetujui; jangan gabungkan persetujuan dan ekspor tanpa konfirmasi jelas di Arenka.
 - [x] Tinjau roadmap dan FAQ publik, pisahkan fitur tersedia vs direncanakan.
 
@@ -47,9 +48,9 @@ Terakhir diperbarui: 2026-11-23
 - [ ] Identifikasi Emdash CMS yang dimaksud.
 - [ ] Verifikasi kontrak 9routers (model, auth, format, streaming).
 - [ ] Putuskan autentikasi sebelum migrasi D1.
-- [ ] Tulis `docs/DESIGN.md` untuk antarmuka orisinal Arenka.
-- [ ] Scaffold Workers + aplikasi frontend, D1/R2, dan gateway AI.
-- [ ] Implementasikan modul berdasarkan peta fungsi yang terverifikasi.
+- [x] Tulis `docs/DESIGN.md` untuk antarmuka orisinal Arenka.
+- [ ] Scaffold Workers + aplikasi frontend, D1/R2, dan gateway AI setelah auth, CMS, dan kontrak gateway dipastikan.
+- [ ] Implementasikan modul berdasarkan peta fungsi yang terverifikasi; mulai dari koleksi, wizard draft, dan workspace manual.
 - [ ] Siapkan binding domain produksi setelah aplikasi siap.
 
 ## Keputusan
