@@ -41,6 +41,8 @@ Terakhir diperbarui: 2026-11-23
 - [x] Tinjau roadmap dan FAQ publik, pisahkan fitur tersedia vs direncanakan.
 - [x] Susun `docs/DESIGN.md` untuk UI MVP Arenka.
 - [x] Tambahkan tipe domain awal buku, layout, bab, revisi, dan ekspor.
+- [x] Scaffold Workers, binding D1/R2, migrasi awal, dan adapter 9routers server-side.
+- [x] Siapkan template `.dev.vars`; nilai rahasia lokal tidak masuk repo.
 
 ## Berikutnya
 
