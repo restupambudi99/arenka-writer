@@ -1,6 +1,6 @@
 # Arenka Writer — Rancangan Antarmuka MVP
 
-Status: rancangan implementasi, 2026-11-23.
+Status: implementasi bertahap, 2026-11-23.
 
 Rancangan ini memakai kebutuhan yang terlihat pada pemetaan antarmuka sebagai
 masukan. Nama, teks, aset, tata letak, dan komponen Arenka harus orisinal.
@@ -11,24 +11,17 @@ masukan. Nama, teks, aset, tata letak, dan komponen Arenka harus orisinal.
 - Navigasi kontekstual buku: Blueprint, Outline, Naskah, Preview.
 - Panel sekunder buku: Sumber, Riset, Catatan, Konsistensi.
 - Menu akun: profil dan keluar. Paket, referral, komunitas, serta CMS berada
-  di luar MVP awal.
+di luar MVP awal.
 
 ## Layar dan aksi
 
-### Beranda
+### Beranda dan koleksi buku
 
-- Tombol **Buat buku** membuka wizard.
+- Tombol **Buat buku** membuka wizard lima tahap.
 - Tombol **Lanjutkan** membuka workspace buku terakhir.
 - Kartu buku memperlihatkan status dan progres; menu tindakan menyediakan
-  arsip/pulihkan. Penghapusan harus memakai konfirmasi dan kebijakan pemulihan.
-- Ringkasan kuota bersifat informatif. Kuota habis membatasi permintaan AI,
-  tetapi tidak mengunci pembacaan, penyuntingan manual, atau ekspor lokal.
-
-### Buku
-
-- Pencarian judul dan filter Aktif/Arsip.
-- Klik kartu membuka workspace; tindakan arsip tidak menghapus konten.
-- Status kosong menyediakan tombol buat buku.
+  arsip/pulihkan.
+- Pencarian judul dan filter Aktif/Arsip; status kosong memberi aksi buat buku.
 
 ### Profil Suara
 
@@ -39,92 +32,55 @@ masukan. Nama, teks, aset, tata letak, dan komponen Arenka harus orisinal.
 
 ### Wizard buku
 
-1. Jenis dan Profil Suara.
-2. Orientasi halaman.
-3. Ukuran halaman.
-4. Judul, ringkasan, target panjang.
-5. Sampul, tipografi, header, nomor halaman, daftar isi.
+1. Jenis buku, judul sementara, dan Profil Suara.
+2. Orientasi gagasan: genre/bidang, premis/tesis, dan nuansa.
+3. Ukuran halaman, orientasi, serta target jumlah kata.
+4. Ringkasan, pembaca sasaran, sudut pandang, dan hal yang perlu dijaga.
+5. Metadata sampul, tipografi, nomor halaman, dan daftar isi.
 
-Tombol **Kembali** mempertahankan isian. **Berikutnya** memvalidasi tahap
-sekarang dan menyimpan draft. **Buat workspace** membuat entitas buku setelah
-ringkasan konfigurasi ditinjau. Keluar dari wizard tidak membuat buku.
+Tombol **Kembali** mempertahankan isian. **Lanjut** memvalidasi dan menyimpan
+tahap ke blueprint D1; blueprint dibuat pada tahap pertama. Tahap kelima
+mengarahkan penulis ke workspace untuk meninjau dan melanjutkan.
 
 ### Pengaturan AI
 
 - Pilihan sumber: gateway Arenka atau provider BYOK yang memang didukung.
-- Kredensial disimpan terenkripsi/secret server-side; tidak pernah dikirim
-  kembali ke browser setelah disimpan.
+- Kredensial disimpan di secret server-side; tidak dikirim kembali ke browser.
 - Pemilih model menampilkan model yang tersedia dari konfigurasi server.
-- **Simpan** hanya mengubah preferensi akun. Uji koneksi harus menjadi aksi
-  terpisah dan menampilkan biaya/kuota bila gateway menyediakannya.
+- Simpan preferensi dan uji koneksi merupakan aksi terpisah.
 
 ### Workspace
 
 - Blueprint → Outline → Naskah → Preview menunjukkan urutan dan prasyarat.
-- Editor autosave dengan indikator tersimpan/gagal simpan dan riwayat revisi.
-- Panel AI menghasilkan usulan terpisah. Tombol **Terapkan usulan** membuat
-  revisi baru setelah pratinjau; tombol **Tolak** menutup usulan.
-- Persetujuan bab adalah tindakan terpisah dan dapat dibatalkan lewat versi
-  baru, tidak melalui penggantian diam-diam.
-- Pemeriksaan konsistensi menghasilkan temuan yang dapat ditandai selesai,
-  diabaikan, atau diperiksa ulang; temuan tidak mengubah teks.
+- Editor menyimpan revisi dan menyajikan riwayat yang dapat dipratinjau/dipulihkan.
+- Panel AI menghasilkan usulan terpisah. Penulis meninjau sebelum menerapkan.
+- Persetujuan bab adalah tindakan terpisah; pemeriksaan konsistensi tidak
+  mengubah teks.
 
 ### Preview dan ekspor
 
-- Preview paginasi memuat sampul, daftar isi, bagian awal, bab, dan bagian
-  akhir. Tautan daftar isi melompat ke bagian terkait.
-- Panel pengaturan memuat ukuran/orientasi, tipografi, header, nomor halaman,
-  sampul, dan gaya daftar isi. Perubahan preview belum permanen sampai **Simpan**.
-- Checklist menerangkan masalah yang dapat diperbaiki otomatis dan yang
-  memerlukan pemeriksaan manusia.
-- **Buat PDF** hanya menghasilkan berkas dari versi yang sudah disetujui.
-  Tombol ini tidak boleh menyetujui bab atau mengubah naskah.
-- PDF disimpan di R2 dengan metadata ekspor di D1 dan tautan unduh terbatas.
+- Preview paginasi memuat sampul, daftar isi, bagian awal, bab, dan bagian akhir.
+- Pengaturan mencakup ukuran/orientasi, tipografi, header, nomor halaman,
+  sampul, dan gaya daftar isi.
+- PDF dibuat dari versi yang disetujui, disimpan di R2 dengan metadata D1 dan
+  tautan unduh terbatas.
 
 ## Pola interaksi
 
-- Setiap aksi utama memberi status loading, hasil, dan pesan error yang dapat
-  dipahami; retry tidak menggandakan revisi atau ekspor.
-- Aksi destruktif atau perubahan status penting meminta konfirmasi yang
-  menyebut objek dan akibatnya.
-- Semua kontrol dapat dipakai keyboard, fokus terlihat, label pembaca layar
-  tersedia, dan tata letak mengalir dari desktop ke ponsel.
+- Aksi utama memberi status loading, hasil, dan pesan error yang dapat dipahami.
+- Aksi destruktif meminta konfirmasi yang menyebut objek dan akibatnya.
+- Semua kontrol dapat dipakai keyboard, fokus terlihat, dan tata letak responsif.
 - Jangan meniru teks, logo, ikon khusus, atau aset situs referensi.
 
-## Batas implementasi saat ini
+## Implementasi saat ini
 
-Implementasi kode menunggu keputusan autentikasi, identitas Emdash CMS, dan
-kontrak 9routers. Komponen inti buku/editor dapat dibangun setelah ketiganya
-dipastikan; jangan mengarang API CMS atau mengirim kredensial ke browser.
+Astro + EmDash berjalan sebagai aplikasi server Cloudflare. Data domain memakai
+D1 dan file memakai R2. Owner API berasal dari session EmDash; mutasi memeriksa
+Origin dan data buku selalu dibatasi berdasarkan owner. Wizard lima tahap
+menyimpan metadata blueprint ke D1 di setiap tahap. Workspace mendukung bab,
+revisi manual, riwayat, pemulihan sebagai revisi baru, dan pengurutan bab.
 
-## Implementasi MVP awal
-
-Layar `/` menampilkan koleksi aktif/arsip dengan pencarian. `/books/new`
-meminta judul, jenis, target kata, dan profil suara siap. `/books/:id` memberi
-outline bab, editor teks sederhana, serta simpan revisi manual. Profil suara
-awal dapat dibuat lewat `/voices/new`.
-
-API buku, bab, revisi, dan profil memakai `locals.user.id` sebagai owner.
-Mutasi memeriksa `Origin`, validasi bentuk/ukuran JSON, dan membatasi query
-berdasarkan owner pada D1. Konten bab baru disimpan sebagai revisi; penyimpanan
-baru menghapus approval revision terdahulu agar status tidak tetap disetujui
-setelah teks berubah.
-
-## Batas implementasi saat ini
-
-Implementasi sekarang belum mencakup wizard lima langkah penuh, rich text,
-riwayat revisi yang dapat dibuka, drag-and-drop urutan bab, profil suara multi-
-versi/edit, pembuatan naskah AI, Preview/PDF, atau pengaturan model UI. Semua
-perubahan antarmuka memakai komponen dan copy Arenka sendiri.
-
-Riwayat revisi dapat dibuka dari editor. Snapshot lama hanya dipratinjau; aksi
-pulihkan meminta konfirmasi dan membuat revisi restore baru tanpa menghapus
-revisi lama. Autosave belum aktif. Penyimpanan dan pemulihan memakai revision
-cursor agar konflik perubahan sesi lain menghasilkan 409, bukan menimpa konten.
-- Struktur bab dapat digeser satu posisi naik/turun. Daftar diurutkan ulang dalam satu batch dan server menerima hanya permutasi lengkap bab milik pemilik buku.
-
-Profil suara kini memiliki daftar, detail versi, riwayat versi baca-saja, dan
-edit versi terbaru yang membuat snapshot baru. Jumlah buku yang menggunakan tiap
-versi ditampilkan untuk menunjukkan bahwa edit tidak mengubah sumber buku lama.
-Profil lama yang bukan versi terbaru tidak dapat diedit dari layar riwayat.
+Belum tersedia rich text, generasi naskah AI, UI pengaturan model, Preview/PDF,
+kuota/ledger AI, atau pemeriksaan kontrak gateway 9routers. Belum ada deploy
+atau migrasi D1 remote.
 
