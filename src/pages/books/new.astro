@@ -1,12 +1,37 @@
 ---
 import { env } from "cloudflare:workers";
-import { authenticatedOwner } from "../../lib/api";
+import { authenticatedOwner, validId } from "../../lib/api";
+import type { BookLayout } from "../../domain";
 import type { Env } from "../../env";
 
 export const prerender = false;
 const ownerId = authenticatedOwner(Astro.locals);
 if (!ownerId) return Astro.redirect("/_emdash/admin");
-const result = await (env as Env).DB.prepare(
+const db = (env as Env).DB;
+const requestedBookId = Astro.url.searchParams.get("bookId");
+const book = requestedBookId && validId(requestedBookId)
+  ? await db.prepare(
+      `SELECT id, kind, title, summary, target_word_count, voice_profile_id,
+        voice_profile_version, layout_json, wizard_json
+       FROM books WHERE id = ? AND owner_id = ? AND archived_at IS NULL LIMIT 1`,
+    ).bind(requestedBookId, ownerId).first<{
+      id: string; kind: string; title: string; summary: string; target_word_count: number;
+      voice_profile_id: string; voice_profile_version: number; layout_json: string; wizard_json: string;
+    }>()
+  : null;
+if (requestedBookId && !book) return Astro.redirect("/");
+let wizard: Record<string, Record<string, string>> = {};
+let layout: BookLayout = {
+  pageSize: "A5", orientation: "portrait", bodyFont: "serif", bodyFontSizePt: 11,
+  headingFont: "serif", pageNumberStyle: "arabic", tableOfContentsStyle: "dotted_leader",
+};
+if (book) {
+  try { wizard = JSON.parse(book.wizard_json) as Record<string, Record<string, string>>; } catch { wizard = {}; }
+  try { layout = JSON.parse(book.layout_json) as BookLayout; } catch { /* use safe defaults */ }
+}
+const stepParam = Number(Astro.url.searchParams.get("step") ?? (book ? "2" : "1"));
+const currentStep = Number.isInteger(stepParam) ? Math.min(Math.max(stepParam, 1), 5) : 1;
+const profiles = await db.prepare(
   `SELECT p.id, p.version, p.name FROM voice_profiles p
    WHERE p.owner_id = ? AND p.status = 'ready'
      AND p.version = (SELECT MAX(latest.version) FROM voice_profiles latest WHERE latest.id = p.id AND latest.owner_id = p.owner_id)
@@ -18,62 +43,182 @@ const result = await (env as Env).DB.prepare(
 <html lang="id">
   <head>
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Buat buku · Arenka Writer</title>
+    <title>Rancang buku · Arenka Writer</title>
     <style>
-      :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#242720;background:#f7f5f0}*{box-sizing:border-box}body{margin:0}.wrap{width:min(700px,100%);margin:auto;padding:36px 22px 70px}.back{color:#536c58;text-decoration:none;font-size:13px}.eyebrow{margin:38px 0 8px;color:#81837b;font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:650}h1{font:500 clamp(34px,6vw,46px)/1.1 Georgia,serif;letter-spacing:-.04em;margin:0 0 10px}.intro{color:#74766f;font-size:14px;line-height:1.6;margin:0 0 30px}.panel{background:#fff;border:1px solid #e6e3dc;border-radius:15px;padding:24px}.field{display:grid;gap:8px;margin-bottom:21px}.field label{font-size:13px;font-weight:620}.field input,.field select,.field textarea{height:44px;border:1px solid #deddd5;border-radius:9px;padding:0 12px;font:inherit;font-size:14px;background:#fff;color:#252821}.field textarea{height:90px;padding:12px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:3px solid #dce8dc;border-color:#719078}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.button{border:0;border-radius:9px;background:#294b3b;color:#fff;padding:12px 17px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}.button:disabled{opacity:.55;cursor:wait}.error{min-height:20px;color:#a53e35;font-size:13px;margin:12px 0 0}.note{padding:12px 14px;border-radius:9px;background:#f4f4ef;color:#77796f;font-size:12px;line-height:1.5;margin-bottom:20px}@media(max-width:520px){.panel{padding:18px}.row{grid-template-columns:1fr;gap:0}}
+      :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#242720;background:#f7f5f0}*{box-sizing:border-box}body{margin:0}.wrap{width:min(760px,100%);margin:auto;padding:34px 22px 70px}.back{color:#536c58;text-decoration:none;font-size:13px}.eyebrow{margin:34px 0 8px;color:#81837b;font-size:12px;font-weight:650;letter-spacing:.09em;text-transform:uppercase}h1{font:500 clamp(33px,5vw,45px)/1.1 Georgia,serif;letter-spacing:-.04em;margin:0 0 10px}.intro{max-width:590px;color:#74766f;font-size:14px;line-height:1.65;margin:0 0 24px}.progress{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:0 0 23px}.progress span{height:4px;border-radius:9px;background:#e1dfd7}.progress span.active{background:#486c52}.progress-label{font-size:12px;color:#797b73;margin:0 0 9px}.panel{background:#fff;border:1px solid #e6e3dc;border-radius:15px;padding:clamp(18px,4vw,27px)}.step-panel[hidden]{display:none}.step-panel h2{font:500 25px Georgia,serif;margin:0 0 7px}.step-help{font-size:13px;color:#77796f;line-height:1.55;margin:0 0 23px}.field{display:grid;gap:8px;margin-bottom:20px}.field label{font-size:13px;font-weight:620}.field small{font-size:11px;color:#85867e;line-height:1.45}.field input,.field select,.field textarea{width:100%;height:44px;border:1px solid #deddd5;border-radius:9px;padding:0 12px;font:inherit;font-size:14px;background:#fff;color:#252821}.field textarea{height:auto;min-height:120px;padding:12px;line-height:1.6;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:3px solid #dce8dc;border-color:#719078}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}.button{border:1px solid #deddd5;border-radius:9px;background:#fff;color:#42463e;padding:11px 16px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}.button.primary{border-color:#294b3b;background:#294b3b;color:white}.button:disabled{opacity:.55;cursor:wait}.error{min-height:20px;color:#a53e35;font-size:13px;margin:11px 0 0}.note{padding:12px 14px;border-radius:9px;background:#f4f4ef;color:#77796f;font-size:12px;line-height:1.55;margin-bottom:18px}.recap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 22px}.recap div{padding:12px;border:1px solid #e8e6df;border-radius:9px}.recap dt{font-size:10px;color:#85867e;text-transform:uppercase;letter-spacing:.06em}.recap dd{margin:6px 0 0;font-size:13px;color:#3d433b}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:540px){.wrap{padding:25px 16px 48px}.row,.recap{grid-template-columns:1fr;gap:0}.actions .button{flex:1}.progress{gap:4px}}
     </style>
   </head>
-  <body>
+  <body data-book-id={book?.id ?? ""} data-step={currentStep}>
     <main class="wrap">
-      <a class="back" href="/">← Kembali ke buku</a>
-      <p class="eyebrow">Buku baru · 1 dari 5</p>
-      <h1>Mulai dari fondasi.</h1>
-      <p class="intro">Tentukan jenis buku dan profil suara. Detail lainnya bisa Anda lengkapi di langkah berikutnya.</p>
-      <form class="panel" id="create-book">
-        <div class="field"><label for="title">Judul sementara</label><input id="title" name="title" maxlength="160" required placeholder="Contoh: Kota di ujung musim" /></div>
-        <div class="field"><label for="summary">Gagasan utama <span style="font-weight:400;color:#85867e">(opsional)</span></label><textarea id="summary" name="summary" maxlength="4000" placeholder="Apa yang ingin Anda ceritakan?"></textarea></div>
-        <div class="row">
-          <div class="field"><label for="kind">Jenis buku</label><select id="kind" name="kind"><option value="fiction">Fiksi</option><option value="nonfiction">Nonfiksi</option></select></div>
-          <div class="field"><label for="words">Target kata</label><input id="words" name="targetWordCount" type="number" min="500" max="1000000" value="30000" required /></div>
-        </div>
-        <div class="field"><label for="voice">Profil suara</label><select id="voice" name="voiceProfileId" required><option value="">Pilih profil suara</option>{result.results.map((profile)=><option value={profile.id} data-version={profile.version}>{profile.name} · v{profile.version}</option>)}</select></div>
-        {!result.results.length && <div class="note">Belum ada profil suara siap. <a href="/voices/new" style="color:#48634d">Buat profil suara</a>, lalu kembali ke langkah ini.</div>}
-        <button class="button" type="submit" disabled={!result.results.length}>Buat blueprint</button>
+      <a class="back" href={book ? `/books/${book.id}` : "/"}>← {book ? "Kembali ke blueprint" : "Kembali ke buku"}</a>
+      <p class="eyebrow">Rancang buku · <span id="step-count">{currentStep}</span> dari 5</p>
+      <h1 id="wizard-title" tabindex="-1">{currentStep === 1 ? "Mulai dari fondasi." : currentStep === 2 ? "Tentukan DNA buku." : currentStep === 3 ? "Pilih bentuk fisiknya." : currentStep === 4 ? "Perjelas pembacanya." : "Siapkan sampul dan halaman."}</h1>
+      <p class="intro" id="wizard-intro">Setiap langkah menyimpan blueprint agar bisa Anda lanjutkan nanti.</p>
+      <div class="progress" aria-label={`Langkah ${currentStep} dari 5`}>{[1,2,3,4,5].map((number)=><span class={number <= currentStep ? "active" : ""}></span>)}</div>
+      <p class="progress-label" id="progress-label">Langkah {currentStep} · {currentStep === 1 ? "Jenis & Profil Suara" : currentStep === 2 ? "Orientasi" : currentStep === 3 ? "Ukuran" : currentStep === 4 ? "Detail" : "Sampul & Halaman"}</p>
+
+      <form class="panel" id="book-wizard" novalidate>
+        <section class="step-panel" data-step="1" hidden={currentStep !== 1}>
+          <h2>Jenis dan profil suara</h2><p class="step-help">Pilih arah umum buku dan suara tulisan yang akan menjadi acuan.</p>
+          <div class="field"><label for="book-title">Judul sementara</label><input id="book-title" maxlength="160" value={book?.title ?? ""} placeholder="Contoh: Kota di ujung musim" data-required="true" /></div>
+          <div class="row"><div class="field"><label for="book-kind">Jenis buku</label><select id="book-kind"><option value="fiction" selected={book?.kind !== "nonfiction"}>Fiksi</option><option value="nonfiction" selected={book?.kind === "nonfiction"}>Nonfiksi</option></select></div>
+            <div class="field"><label for="voice-profile">Profil suara</label><select id="voice-profile" data-required="true"><option value="">Pilih profil suara</option>{profiles.results.map((profile)=><option value={profile.id} data-version={profile.version} selected={book?.voice_profile_id === profile.id && book.voice_profile_version === profile.version}>{profile.name} · v{profile.version}</option>)}</select></div></div>
+          {!profiles.results.length && <div class="note">Belum ada profil suara siap. <a href="/voices/new" style="color:#48634d">Buat profil suara</a>, lalu kembali ke langkah ini.</div>}
+        </section>
+
+        <section class="step-panel" data-step="2" hidden={currentStep !== 2}>
+          <h2>Gagasan inti</h2><p class="step-help">Tuliskan tema atau bidang, premis, serta nuansa yang ingin dijaga.</p>
+          <div class="field"><label for="genre">Genre atau bidang</label><input id="genre" maxlength="120" value={wizard.dna?.genre ?? ""} placeholder="Contoh: misteri keluarga" data-required="true" /></div>
+          <div class="field"><label for="premise">Premis atau tesis utama</label><textarea id="premise" maxlength="5000" data-required="true" placeholder="Apa yang terjadi atau gagasan apa yang ingin Anda buktikan?">{wizard.dna?.premise ?? ""}</textarea></div>
+          <div class="field"><label for="tone">Nuansa yang diinginkan <span style="font-weight:400;color:#85867e">(opsional)</span></label><input id="tone" maxlength="300" value={wizard.dna?.tone ?? ""} placeholder="Contoh: hangat, tajam, penuh harapan" /></div>
+        </section>
+
+        <section class="step-panel" data-step="3" hidden={currentStep !== 3}>
+          <h2>Ukuran dan panjang</h2><p class="step-help">Tetapkan target awal. Anda masih bisa mengubah tata letak sebelum ekspor.</p>
+          <div class="row"><div class="field"><label for="page-size">Ukuran halaman</label><select id="page-size"><option value="A5" selected={layout.pageSize === "A5"}>A5 · buku standar</option><option value="A4" selected={layout.pageSize === "A4"}>A4</option><option value="B5" selected={layout.pageSize === "B5"}>B5</option><option value="B6" selected={layout.pageSize === "B6"}>B6</option><option value="custom" selected={layout.pageSize === "custom"}>Ukuran khusus</option></select></div>
+            <div class="field"><label for="orientation">Orientasi halaman</label><select id="orientation"><option value="portrait" selected={layout.orientation === "portrait"}>Potret</option><option value="landscape" selected={layout.orientation === "landscape"}>Lanskap</option></select></div></div>
+          <div class="row" id="custom-size" hidden={layout.pageSize !== "custom"}><div class="field"><label for="custom-width">Lebar (mm)</label><input id="custom-width" type="number" min="80" max="500" value={layout.customWidthMm ?? 148} /></div><div class="field"><label for="custom-height">Tinggi (mm)</label><input id="custom-height" type="number" min="100" max="700" value={layout.customHeightMm ?? 210} /></div></div>
+          <div class="field"><label for="target-words">Target jumlah kata</label><input id="target-words" type="number" min="500" max="1000000" value={book?.target_word_count ?? 30000} data-required="true" /><small>Target ini membantu membagi ruang antar bab, bukan batas penulisan.</small></div>
+        </section>
+
+        <section class="step-panel" data-step="4" hidden={currentStep !== 4}>
+          <h2>Rencanakan pengalaman pembaca</h2><p class="step-help">Ringkasan dan pembaca sasaran membantu menjaga fokus buku.</p>
+          <div class="field"><label for="summary">Ringkasan buku</label><textarea id="summary" maxlength="4000" placeholder="Jelaskan perjalanan atau manfaat yang akan diperoleh pembaca.">{book?.summary ?? ""}</textarea></div>
+          <div class="field"><label for="audience">Untuk siapa buku ini?</label><input id="audience" maxlength="500" value={wizard.details?.audience ?? ""} placeholder="Contoh: pembaca dewasa muda yang menyukai misteri" data-required="true" /></div>
+          <div class="row"><div class="field"><label for="point-of-view">Sudut pandang</label><select id="point-of-view"><option value="" selected={!wizard.details?.pointOfView}>Pilih bila sudah tahu</option><option value="first-person" selected={wizard.details?.pointOfView === "first-person"}>Orang pertama</option><option value="third-person" selected={wizard.details?.pointOfView === "third-person"}>Orang ketiga</option><option value="multiple" selected={wizard.details?.pointOfView === "multiple"}>Beberapa sudut pandang</option><option value="undecided" selected={wizard.details?.pointOfView === "undecided"}>Belum diputuskan</option></select></div><div class="field"><label for="must-include">Hal yang perlu dijaga <span style="font-weight:400;color:#85867e">(opsional)</span></label><input id="must-include" maxlength="1000" value={wizard.details?.mustInclude ?? ""} placeholder="Fakta, batasan, atau tema penting" /></div></div>
+        </section>
+
+        <section class="step-panel" data-step="5" hidden={currentStep !== 5}>
+          <h2>Sampul dan halaman</h2><p class="step-help">Atur metadata sampul dan gaya halaman awal. Semua pengaturan dapat ditinjau lagi nanti.</p>
+          <div class="field"><label for="cover-title">Judul pada sampul</label><input id="cover-title" maxlength="160" value={wizard.cover?.title ?? book?.title ?? ""} data-required="true" /></div>
+          <div class="row"><div class="field"><label for="cover-subtitle">Subjudul <span style="font-weight:400;color:#85867e">(opsional)</span></label><input id="cover-subtitle" maxlength="200" value={wizard.cover?.subtitle ?? ""} /></div><div class="field"><label for="author-name">Nama penulis</label><input id="author-name" maxlength="120" value={wizard.cover?.author ?? ""} placeholder="Nama yang akan dicetak" data-required="true" /></div></div>
+          <div class="row"><div class="field"><label for="body-font">Huruf isi</label><select id="body-font"><option value="serif" selected={layout.bodyFont === "serif"}>Serif</option><option value="sans-serif" selected={layout.bodyFont === "sans-serif"}>Sans serif</option></select></div><div class="field"><label for="font-size">Ukuran huruf isi</label><input id="font-size" type="number" min="8" max="24" value={layout.bodyFontSizePt} /></div></div>
+          <div class="row"><div class="field"><label for="page-numbers">Nomor halaman</label><select id="page-numbers"><option value="arabic" selected={layout.pageNumberStyle === "arabic"}>Angka</option><option value="roman_front_matter" selected={layout.pageNumberStyle === "roman_front_matter"}>Romawi di bagian awal</option><option value="none" selected={layout.pageNumberStyle === "none"}>Tanpa nomor</option></select></div><div class="field"><label for="toc-style">Daftar isi</label><select id="toc-style"><option value="dotted_leader" selected={layout.tableOfContentsStyle === "dotted_leader"}>Titik penghubung</option><option value="labeled" selected={layout.tableOfContentsStyle === "labeled"}>Judul bagian</option><option value="digits" selected={layout.tableOfContentsStyle === "digits"}>Nomor halaman</option><option value="none" selected={layout.tableOfContentsStyle === "none"}>Tanpa daftar isi</option></select></div></div>
+          <div class="note">Blueprint disimpan sebagai draft. Anda dapat mengubah detail dan tata letak dari workspace sebelum menulis.</div>
+          <dl class="recap"><div><dt>Judul</dt><dd id="recap-title">{book?.title ?? "Akan diisi"}</dd></div><div><dt>Jenis</dt><dd id="recap-kind">{book?.kind === "nonfiction" ? "Nonfiksi" : "Fiksi"}</dd></div><div><dt>Profil suara</dt><dd id="recap-voice">{profiles.results.find((profile) => profile.id === book?.voice_profile_id)?.name ?? "Pilih pada langkah pertama"}</dd></div><div><dt>Ukuran</dt><dd id="recap-size">{layout.pageSize} · {layout.orientation === "portrait" ? "Potret" : "Lanskap"}</dd></div></dl>
+        </section>
+        <div class="actions"><button class="button" id="previous" type="button">Kembali</button><button class="button primary" id="next" type="submit">Lanjut</button></div>
         <p class="error" id="error" role="status" aria-live="polite"></p>
       </form>
     </main>
     <script>
-      const form = document.querySelector<HTMLFormElement>("#create-book")!;
-      const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+      const form = document.querySelector<HTMLFormElement>("#book-wizard")!;
+      const bookIdFromPage = document.body.dataset.bookId;
+      let bookId = bookIdFromPage || null;
+      let step = Number(document.body.dataset.step || "1");
+      const panels = [...document.querySelectorAll<HTMLElement>(".step-panel")];
+      const nextButton = document.querySelector<HTMLButtonElement>("#next")!;
+      const previousButton = document.querySelector<HTMLButtonElement>("#previous")!;
       const error = document.querySelector<HTMLElement>("#error")!;
+      const titles = ["", "Mulai dari fondasi.", "Tentukan DNA buku.", "Pilih bentuk fisiknya.", "Perjelas pembacanya.", "Siapkan sampul dan halaman."];
+      const labels = ["", "Jenis & Profil Suara", "Orientasi", "Ukuran", "Detail", "Sampul & Halaman"];
+      const read = (id: string) => ((document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value ?? "").trim();
+      const selectedProfileVersion = () => Number(document.querySelector("#voice-profile option:checked")?.getAttribute("data-version") ?? 0);
+      function currentLayout() {
+        const pageSize = read("page-size");
+        return {
+          pageSize,
+          ...(pageSize === "custom" ? { customWidthMm: Number(read("custom-width")), customHeightMm: Number(read("custom-height")) } : {}),
+          orientation: read("orientation"), bodyFont: read("body-font"), bodyFontSizePt: Number(read("font-size")),
+          headingFont: read("body-font"), pageNumberStyle: read("page-numbers"), tableOfContentsStyle: read("toc-style"),
+        };
+      }
+      function currentWizard() {
+        return {
+          dna: { genre: read("genre"), premise: read("premise"), tone: read("tone") },
+          details: { audience: read("audience"), pointOfView: read("point-of-view"), mustInclude: read("must-include") },
+          cover: { title: read("cover-title"), subtitle: read("cover-subtitle"), author: read("author-name") },
+        };
+      }
+      function updateRecap() {
+        document.querySelector<HTMLElement>("#recap-title")!.textContent = read("book-title") || "Akan diisi";
+        document.querySelector<HTMLElement>("#recap-kind")!.textContent = read("book-kind") === "nonfiction" ? "Nonfiksi" : "Fiksi";
+        const voice = document.querySelector("#voice-profile")!;
+        document.querySelector<HTMLElement>("#recap-voice")!.textContent = voice.querySelector("option:checked")?.textContent ?? "Pilih pada langkah pertama";
+        const layout = currentLayout();
+        document.querySelector<HTMLElement>("#recap-size")!.textContent = `${layout.pageSize} · ${layout.orientation === "portrait" ? "Potret" : "Lanskap"}`;
+      }
+      function showStep(next: number) {
+        step = Math.min(Math.max(next, 1), 5);
+        panels.forEach((panel) => { panel.hidden = Number(panel.dataset.step) !== step; });
+        document.querySelector<HTMLElement>("#step-count")!.textContent = String(step);
+        document.querySelector<HTMLElement>("#wizard-title")!.textContent = titles[step];
+        document.querySelector<HTMLElement>("#progress-label")!.textContent = `Langkah ${step} · ${labels[step]}`;
+        document.querySelector(".progress")?.setAttribute("aria-label", `Langkah ${step} dari 5`);
+        document.querySelectorAll<HTMLElement>(".progress span").forEach((bar, index) => bar.classList.toggle("active", index < step));
+        previousButton.disabled = step === 1;
+        nextButton.textContent = step === 5 ? "Simpan blueprint" : "Lanjut";
+        history.replaceState(null, "", bookId ? `/books/new?bookId=${bookId}&step=${step}` : `/books/new?step=${step}`);
+        error.textContent = "";
+        updateRecap();
+        document.querySelector<HTMLElement>("#wizard-title")!.focus();
+      }
+      function validateStep(): boolean {
+        const panel = panels.find((item) => Number(item.dataset.step) === step)!;
+        for (const field of Array.from(panel.querySelectorAll("[data-required=true]")) as Array<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+          if (!field.value.trim()) { field.setCustomValidity("Lengkapi bagian ini untuk melanjutkan."); field.reportValidity(); field.setCustomValidity(""); return false; }
+          if (!field.checkValidity()) { field.reportValidity(); return false; }
+        }
+        if (step === 3 && read("page-size") === "custom") {
+          const width = Number(read("custom-width")), height = Number(read("custom-height"));
+          if (width < 80 || width > 500 || height < 100 || height > 700) { error.textContent = "Ukuran khusus harus berada dalam rentang yang tertera."; return false; }
+        }
+        return true;
+      }
+      async function saveStep(): Promise<void> {
+        const headers = { "Content-Type": "application/json" };
+        if (step === 1 && !bookId) {
+          const voice = document.getElementById("voice-profile") as unknown as HTMLSelectElement;
+          const response = await fetch("/api/books", { method: "POST", headers, body: JSON.stringify({
+            title: read("book-title"), kind: read("book-kind"), voiceProfileId: voice.value,
+            voiceProfileVersion: selectedProfileVersion(), targetWordCount: 30000, summary: "",
+          }) });
+          const payload: unknown = await response.json();
+          const result = payload as { error?: unknown; book?: { id?: unknown } };
+          if (!response.ok || typeof result.book?.id !== "string") throw new Error(result.error === "not_authenticated" ? "Sesi berakhir. Masuk kembali lalu coba lagi." : "Blueprint belum tersimpan. Periksa pilihan profil suara.");
+          bookId = result.book.id;
+          return;
+        }
+        if (!bookId) throw new Error("Blueprint belum dibuat. Kembali ke langkah pertama.");
+        let patch: Record<string, unknown>;
+        if (step === 1) {
+          const voice = document.getElementById("voice-profile") as unknown as HTMLSelectElement;
+          patch = { title: read("book-title"), kind: read("book-kind"), voiceProfileId: voice.value, voiceProfileVersion: selectedProfileVersion() };
+        } else if (step === 2) {
+          patch = { wizard: currentWizard() };
+        } else if (step === 3) {
+          patch = { targetWordCount: Number(read("target-words")), layout: currentLayout() };
+        } else if (step === 4) {
+          patch = { summary: read("summary"), wizard: currentWizard() };
+        } else {
+          patch = { layout: currentLayout(), wizard: currentWizard() };
+        }
+        const response = await fetch(`/api/books/${bookId}`, { method: "PATCH", headers, body: JSON.stringify(patch) });
+        if (!response.ok) throw new Error(response.status === 401 ? "Sesi berakhir. Masuk kembali lalu coba lagi." : response.status === 409 ? "Data buku berubah di sesi lain. Muat ulang lalu lanjutkan." : "Langkah belum tersimpan. Periksa isian dan coba lagi.");
+      }
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const data = new FormData(form);
-        const voice = document.querySelector("#voice")!;
-        const selectedVersion = voice.querySelector("option:checked")?.getAttribute("data-version") ?? "";
-        button.disabled = true;
-        error.textContent = "Menyimpan blueprint…";
+        if (!validateStep()) return;
+        nextButton.disabled = true; previousButton.disabled = true;
+        error.textContent = "Menyimpan langkah…";
         try {
-          const response = await fetch("/api/books", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: data.get("title"), summary: data.get("summary"), kind: data.get("kind"),
-              targetWordCount: Number(data.get("targetWordCount")),
-              voiceProfileId: data.get("voiceProfileId"), voiceProfileVersion: Number(selectedVersion),
-            }),
-          });
-          const result: unknown = await response.json();
-          const payload = result as { error?: unknown; book?: { id?: unknown } };
-          if (!response.ok || typeof payload.book?.id !== "string") {
-            throw new Error(payload.error === "not_authenticated" ? "Sesi berakhir. Masuk kembali lalu coba lagi." : "Blueprint belum tersimpan. Periksa isian dan coba lagi.");
-          }
-          window.location.assign(`/books/${payload.book.id}`);
+          await saveStep();
+          if (step === 5) { window.location.assign(`/books/${bookId}`); return; }
+          showStep(step + 1);
         } catch (cause) {
-          error.textContent = cause instanceof Error ? cause.message : "Terjadi kendala. Coba lagi.";
-          button.disabled = false;
+          error.textContent = cause instanceof Error ? cause.message : "Langkah belum tersimpan. Coba lagi.";
+        } finally {
+          nextButton.disabled = false;
+          previousButton.disabled = step === 1;
         }
       });
+      previousButton.addEventListener("click", () => showStep(step - 1));
+      document.querySelector("#page-size")?.addEventListener("change", (event) => {
+        const select = event.currentTarget as HTMLSelectElement;
+        document.querySelector<HTMLElement>("#custom-size")!.hidden = select.value !== "custom";
+      });
+      document.querySelectorAll("input,select,textarea").forEach((field) => field.addEventListener("input", updateRecap));
+      showStep(step);
     </script>
   </body>
 </html>
