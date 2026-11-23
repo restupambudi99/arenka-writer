@@ -74,4 +74,13 @@ check/build belum dijalankan. Jangan deploy sebelum check berhasil dan resource
 D1/R2 produksi disiapkan. Kontrak gateway 9routers juga belum dipanggil.
 
 Dependency versions are locked in `package-lock.json`; use `npm ci` for repeatable setup. `astro check` and the production build currently pass. The build emits a frontend chunk size warning (>500 KB), which should be addressed when splitting the admin/editor UI.
+## Riwayat revisi naskah
+
+- `GET /api/books/:bookId/chapters/:chapterId/revisions` menampilkan hingga 50 revisi terbaru, sumber, waktu, panjang, dan revisi aktif.
+- `GET /api/books/:bookId/chapters/:chapterId/revisions/:revisionId` membaca isi revisi untuk pratinjau.
+- `POST` pada endpoint detail revisi memulihkan teks sebagai revisi `restore` baru, mempertahankan revisi lama, dan membatalkan approval lama. Pengguna harus mengonfirmasi aksinya.
+- `PUT` penyimpanan naskah menerima `expectedCurrentRevisionId`; konflik menghasilkan 409. Mutasi restore memakai syarat versi aktif yang sama.
+- Migrasi `0002_revision_restore.sql` memperluas sumber revisi dan menambah referensi `restored_from_revision_id`.
+
+Layar workspace memuat riwayat bab aktif dan menampilkan snapshot dalam pratinjau terpisah. Pergantian bab menanyakan konfirmasi jika ada perubahan lokal yang belum disimpan.
 
