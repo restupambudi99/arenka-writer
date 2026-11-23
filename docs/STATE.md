@@ -24,18 +24,20 @@ Terakhir diperbarui: 2026-11-23
 3. Jangan menaruh rahasia di repo; pakai Worker secrets dan `.dev.vars`.
 4. Buat commit kecil per milestone dengan catatan yang memungkinkan agen lain
    meneruskan pekerjaan.
-5. Spesifikasi fungsional ada di `docs/FUNCTIONAL-SPEC.md`.
+5. Spesifikasi fungsional ada di `docs/FUNCTIONAL-SPEC.md`; peta antarmuka
+   referensi ada di `docs/REFERENCE-OBSERVATIONS.md`.
 
 ## Selesai
 
 - [x] Observasi awal onboarding referensi (halaman pertama saja).
+- [x] Peta fitur dashboard, buku, profil suara, pengaturan AI, paket, dan referral.
 - [x] Catat batas bukti dan kebutuhan Arenka di spesifikasi v0.2.
 - [x] Pastikan repo GitHub tersedia, kosong, dan akun memiliki hak push.
 
 ## Berikutnya
 
-- [ ] Lanjutkan pemetaan layar onboarding berikutnya dan aplikasi setelahnya
-      dalam sesi browser yang sudah login; hindari submit atau mengubah akun.
+- [ ] Petakan editor buku dan tahap lanjut wizard tanpa menyimpan atau
+      mengubah data akun.
 - [ ] Identifikasi Emdash CMS yang dimaksud.
 - [ ] Verifikasi kontrak 9routers (model, auth, format, streaming).
 - [ ] Putuskan autentikasi sebelum migrasi D1.
