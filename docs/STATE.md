@@ -32,16 +32,16 @@ Terakhir diperbarui: 2026-11-23
 - [x] Observasi awal onboarding referensi (halaman pertama saja).
 - [x] Peta fitur dashboard, buku, profil suara, pengaturan AI, paket, dan referral.
 - [x] Peta wizard buku hingga sampul, layout halaman, dan daftar isi.
-- [x] Baca workspace dan Blueprint: struktur modul, bagian Blueprint,
-      status/riwayat versi, serta ribbon editor.
+- [x] Baca workspace, Blueprint, Outline, dan panel Naskah.
+- [x] Catat alur versi naskah, status review, dan kontrol editor kaya.
 - [x] Baca struktur asisten, sumber/riset, konsistensi, ekspor, dan checklist.
 - [x] Tinjau roadmap dan FAQ publik, pisahkan fitur tersedia vs direncanakan.
 
 ## Berikutnya
 
-- [ ] Interaksi editor teks dan alur AI belum diuji. Jangan mengubah teks,
-      mengirim prompt, menyetujui bagian, atau menjalankan pemeriksaan AI
-      tanpa instruksi khusus.
+- [ ] Penulisan bab memerlukan generasi AI; hasil harus ditinjau penulis
+      sebelum persetujuan. Jangan mengubah atau menyetujui konten tanpa
+      instruksi khusus.
 - [ ] Identifikasi Emdash CMS yang dimaksud.
 - [ ] Verifikasi kontrak 9routers (model, auth, format, streaming).
 - [ ] Putuskan autentikasi sebelum migrasi D1.
