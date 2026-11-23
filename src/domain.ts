@@ -52,7 +52,8 @@ export interface ChapterRevision {
   chapterId: string;
   revisionNumber: number;
   content: string;
-  source: "manual" | "ai_suggestion" | "import";
+  source: "manual" | "ai_suggestion" | "import" | "restore";
+  restoredFromRevisionId?: string | null;
   createdAt: string;
 }
 
