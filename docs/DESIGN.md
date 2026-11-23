@@ -117,3 +117,8 @@ riwayat revisi yang dapat dibuka, drag-and-drop urutan bab, profil suara multi-
 versi/edit, pembuatan naskah AI, Preview/PDF, atau pengaturan model UI. Semua
 perubahan antarmuka memakai komponen dan copy Arenka sendiri.
 
+Riwayat revisi dapat dibuka dari editor. Snapshot lama hanya dipratinjau; aksi
+pulihkan meminta konfirmasi dan membuat revisi restore baru tanpa menghapus
+revisi lama. Autosave belum aktif. Penyimpanan dan pemulihan memakai revision
+cursor agar konflik perubahan sesi lain menghasilkan 409, bukan menimpa konten.
+
