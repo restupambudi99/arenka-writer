@@ -101,8 +101,12 @@ kontrol dan alur, tanpa menyimpan judul, sinopsis, nama pemilik, atau isi buku.
 - Tab Asisten menyediakan sesi/riwayat percakapan, informasi konteks buku,
   sesi baru, mode Penulis dan Riset, pemilih model, input instruksi, serta
   penambahan gambar/referensi.
-- Preview & unduh memisahkan pratinjau, tata letak, hasil ekspor PDF, dan
-  checklist siap terbit. PDF final nonaktif saat belum ada bab.
+- Preview & unduh menyediakan pratinjau buku, pengaturan halaman, pratinjau
+  seluruh halaman, checklist siap terbit, serta pembuatan PDF.
+- Pratinjau seluruh buku menyusun sampul, daftar isi, dan bagian naskah secara
+  berurutan. Daftar isi menaut ke bagian terkait; setiap bagian menyediakan
+  pemilih halaman dan navigasi halaman sebelumnya/berikutnya. Perubahan
+  ukuran kertas/layout tercermin pada pratinjau.
 - Checklist mencakup status penulisan/persetujuan bab, judul bab, temuan
   konsistensi, sitasi dan bibliografi, judul/penulis, sampul, teks alternatif
   gambar, nomor halaman, halaman hak cipta dan tentang penulis. Pembaca juga
@@ -110,6 +114,9 @@ kontrol dan alur, tanpa menyimpan judul, sinopsis, nama pemilik, atau isi buku.
   pihak ketiga, sinopsis belakang, dan ISBN bila diperlukan.
 - Pengaturan layout mencakup ukuran/arah halaman, target kata, sampul,
   tipografi/heading, header, penomoran, dan daftar isi dengan pratinjau.
+- Aksi PDF pada panel preview secara eksplisit dapat menyetujui bab yang
+  belum disetujui sekaligus membuat PDF. Perlakukan persetujuan dan ekspor
+  sebagai tindakan terpisah dalam Arenka, dengan konfirmasi yang jelas.
   Inspeksi tidak mengedit, menyetujui, mengunggah, menjalankan AI, atau ekspor.
 
 ### Paket dan pembayaran
