@@ -21,17 +21,17 @@ Terakhir diperbarui: 2026-11-23
 - [x] Peta antarmuka referensi dan spesifikasi fitur Arenka orisinal.
 - [x] Scaffold Astro + EmDash Cloudflare, D1/R2, Durable Object, passkey, health route, dan katalog model terlindungi session.
 - [x] Migrasi domain buku, profil suara, bab, revisi, ekspor, dan pemakaian AI.
-- [x] UI koleksi buku, profil suara, pembuatan blueprint, dan workspace naskah.
+- [x] UI koleksi buku, profil suara, wizard blueprint lima tahap, dan workspace naskah.
 - [x] API buku/bab/revisi dengan owner session, validasi, Origin check, dan revision cursor.
 - [x] Riwayat revisi, pratinjau, pemulihan sebagai revisi baru, dan pengurutan bab.
 - [x] Profil suara multi-versi: daftar/detail, pratinjau versi lama, simpan versi baru, dan jumlah buku per versi.
 - [x] `.dev.vars` lokal diabaikan Git; nilai key tidak pernah dikirim ke gateway.
 - [x] `npm run typecheck` lulus tanpa error/warning/hint (24 file).
-- [x] `npm run build` lulus; tersisa peringatan bundle frontend >500 KB.
+- [x] `npm run build` lulus; tersisa peringatan bundle frontend >500 KB dan Wrangler tidak dapat menulis log di luar workspace.
 
 ## Berikutnya
 
-- [ ] Lengkapi wizard lima tahap dan duplicate/arsip profil suara.
+- [ ] Lengkapi duplicate/arsip profil suara.
 - [ ] Lengkapi metadata riwayat revisi dan kontrol penamaan bab.
 - [ ] Rancang kuota, rate limit, dan ledger sebelum mengaktifkan chat AI.
 - [ ] Verifikasi kontrak 9routers sebelum request pertama.
