@@ -121,4 +121,5 @@ Riwayat revisi dapat dibuka dari editor. Snapshot lama hanya dipratinjau; aksi
 pulihkan meminta konfirmasi dan membuat revisi restore baru tanpa menghapus
 revisi lama. Autosave belum aktif. Penyimpanan dan pemulihan memakai revision
 cursor agar konflik perubahan sesi lain menghasilkan 409, bukan menimpa konten.
+- Struktur bab dapat digeser satu posisi naik/turun. Daftar diurutkan ulang dalam satu batch dan server menerima hanya permutasi lengkap bab milik pemilik buku.
 
