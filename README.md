@@ -85,4 +85,12 @@ Dependency versions are locked in `package-lock.json`; use `npm ci` for repeatab
 Layar workspace memuat riwayat bab aktif dan menampilkan snapshot dalam pratinjau terpisah. Pergantian bab menanyakan konfirmasi jika ada perubahan lokal yang belum disimpan.
 - `PUT /api/books/:bookId/chapters/order` menerima seluruh daftar ID bab sebagai urutan tujuan. Server memeriksa bahwa daftar itu tepat berisi bab milik pengguna, lalu mengubah posisi melalui batch D1 dengan posisi sementara agar pertukaran posisi tidak melanggar unique constraint.
 - Workspace menampilkan tombol bab naik/turun, menonaktifkan batas atas/bawah, dan meminta konfirmasi jika ada teks yang belum disimpan sebelum berpindah/menyusun ulang.
+# API profil suara
+
+- `GET /api/voice-profiles` hanya mengembalikan versi terbaru berstatus siap.
+- `GET /api/voice-profiles/:profileId?version=n` menampilkan snapshot dan daftar versi dengan jumlah buku yang memakai tiap versi.
+- `PUT /api/voice-profiles/:profileId` mensyaratkan `expectedVersion`, lalu membuat versi baru. Benturan edit menghasilkan 409.
+- Pembuatan buku hanya menerima versi profil terbaru yang masih aktif. Buku lama tetap mereferensikan versi yang tersimpan pada saat dibuat.
+
+UI: `/voices` untuk daftar, `/voices/new` untuk profil baru, dan `/voices/:id` untuk melihat riwayat serta mengedit versi terbaru.
 
