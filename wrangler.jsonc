@@ -12,6 +12,7 @@
     {
       "binding": "DB",
       "database_name": "arenka-writer",
+      "database_id": "47288a45-2c32-40f7-b260-ba53146f65fc",
       "migrations_dir": "migrations"
     }
   ],
@@ -27,4 +28,5 @@
   "triggers": { "crons": ["* * * * *"] },
   "secrets": { "required": ["AI_API_KEY", "AI_MODEL"] }
 }
+
 
