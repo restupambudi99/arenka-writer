@@ -1,0 +1,36 @@
+---
+import { env } from "cloudflare:workers";
+import { authenticatedOwner } from "../../lib/api";
+import type { Env } from "../../env";
+
+export const prerender = false;
+const ownerId = authenticatedOwner(Astro.locals);
+if (!ownerId) return Astro.redirect("/_emdash/admin");
+const profiles = await (env as Env).DB.prepare(
+  `SELECT p.id, p.version, p.name, p.profile_json, p.created_at,
+    (SELECT COUNT(*) FROM books b WHERE b.voice_profile_id = p.id AND b.owner_id = p.owner_id) AS book_count
+   FROM voice_profiles p
+   WHERE p.owner_id = ? AND p.status = 'ready'
+     AND p.version = (SELECT MAX(latest.version) FROM voice_profiles latest WHERE latest.id = p.id AND latest.owner_id = p.owner_id)
+   ORDER BY p.created_at DESC LIMIT 100`,
+).bind(ownerId).all<{ id: string; version: number; name: string; profile_json: string; created_at: string; book_count: number }>();
+function summary(json: string): string {
+  try {
+    const value: unknown = JSON.parse(json);
+    if (value && typeof value === "object" && "description" in value && typeof value.description === "string") return value.description;
+  } catch { /* malformed legacy data is omitted from the card */ }
+  return "";
+}
+---
+<!doctype html>
+<html lang="id">
+  <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Profil Suara · Arenka Writer</title>
+    <style>
+      :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#242720;background:#f7f5f0}*{box-sizing:border-box}body{margin:0}.shell{width:min(960px,100%);margin:auto;padding:35px 22px 70px}.back{color:#526b57;text-decoration:none;font-size:13px}.heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:40px 0 22px}h1{font:500 clamp(34px,5vw,46px)/1.1 Georgia,serif;letter-spacing:-.04em;margin:0 0 9px}.sub{font-size:14px;line-height:1.6;color:#74766f;margin:0}.button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:9px;background:#294b3b;color:#fff;padding:12px 16px;font-family:inherit;font-size:13px;font-weight:600;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{display:flex;flex-direction:column;min-height:195px;padding:20px;border:1px solid #e6e3dc;border-radius:14px;background:#fff;color:inherit;text-decoration:none}.card:hover{border-color:#aabca9}.meta{display:flex;justify-content:space-between;gap:10px;color:#85867e;font-size:11px}.pill{background:#edf2eb;color:#48634d;border-radius:999px;padding:5px 9px}.card h2{font:500 22px Georgia,serif;margin:17px 0 7px}.desc{color:#72746c;font-size:13px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.foot{margin-top:auto;padding-top:15px;color:#888980;font-size:11px}.empty{padding:38px 22px;text-align:center;border:1px dashed #d8d6cd;border-radius:14px}.empty h2{font:500 23px Georgia,serif;margin:0 0 8px}.empty p{font-size:13px;line-height:1.6;color:#77796f;margin:0 auto 18px;max-width:430px}@media(max-width:620px){.heading{align-items:start;flex-direction:column}.grid{grid-template-columns:1fr}.button{width:100%}}
+    </style>
+  </head>
+  <body><main class="shell"><a class="back" href="/">← Kembali ke buku</a><div class="heading"><div><h1>Profil Suara</h1><p class="sub">Simpan ciri tulisan Anda sebagai versi yang bisa dipakai lintas buku.</p></div><a class="button" href="/voices/new">Buat profil suara</a></div>
+    {profiles.results.length ? <div class="grid">{profiles.results.map((profile)=><a class="card" href={`/voices/${profile.id}`}><div class="meta"><span class="pill">Aktif · v{profile.version}</span><span>{profile.book_count} buku</span></div><h2>{profile.name}</h2><span class="desc">{summary(profile.profile_json) || "Belum ada deskripsi."}</span><span class="foot">Diperbarui {new Date(profile.created_at).toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"})}</span></a>)}</div> : <section class="empty"><h2>Mulai dengan satu profil</h2><p>Catat pilihan kata, ritme, sudut pandang, dan batasan tulisan yang ingin Anda pertahankan.</p><a class="button" href="/voices/new">Buat profil suara pertama</a></section>}
+  </main></body>
+</html>
+
