@@ -119,8 +119,8 @@ belum masuk lingkup sampai kebutuhan dan bukti teknisnya dipastikan.
 ## Infrastruktur yang diminta
 
 - Cloudflare Workers; D1 untuk data relasional dan R2 untuk berkas.
-- Emdash CMS diminta, tetapi produk/paket dan kontrak integrasinya belum
-  diidentifikasi. Jangan menambah dependensi CMS sebelum jelas.
+- EmDash CMS resmi untuk Astro dipakai sebagai CMS dan autentikasi session.
+  Integrasi Cloudflare menggunakan D1 dan R2; tabel domain Arenka tetap terpisah.
 - AI melalui `https://9routers.vpsarenka.site/v1`. Format API dan model perlu
   diverifikasi; panggilan wajib berada di satu gateway server-side.
 - Domain target: `https://writer.arenka.biz.id`.
@@ -143,7 +143,6 @@ migrasi D1 dibuat. R2: bucket sampel, riset, dan ekspor (nama final menyusul).
 
 ## Pertanyaan terbuka
 
-1. Emdash CMS yang dimaksud: tautan produk/repo dan peran yang diinginkan.
-2. 9routers: endpoint model, autentikasi, streaming, dan format API.
-3. Autentikasi Arenka: Cloudflare Access, OAuth, atau sesi aplikasi.
-4. Layar referensi lain setelah onboarding agar parity dapat dipetakan.
+1. 9routers: format respons, streaming, batas rate, dan model yang diizinkan.
+2. Alur undangan/onboarding dan role pengguna EmDash.
+3. Layar referensi lain setelah onboarding agar parity dapat dipetakan.
