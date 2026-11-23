@@ -1,0 +1,81 @@
+---
+import { env } from "cloudflare:workers";
+import { authenticatedOwner } from "../../lib/api";
+import type { Env } from "../../env";
+
+export const prerender = false;
+const ownerId = authenticatedOwner(Astro.locals);
+if (!ownerId) return Astro.redirect("/_emdash/admin");
+const result = await (env as Env).DB.prepare(
+  `SELECT p.id, p.version, p.name FROM voice_profiles p
+   WHERE p.owner_id = ? AND p.status = 'ready'
+     AND p.version = (SELECT MAX(latest.version) FROM voice_profiles latest WHERE latest.id = p.id AND latest.owner_id = p.owner_id)
+   ORDER BY p.created_at DESC LIMIT 100`,
+).bind(ownerId).all<{ id: string; version: number; name: string }>();
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Buat buku · Arenka Writer</title>
+    <style>
+      :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#242720;background:#f7f5f0}*{box-sizing:border-box}body{margin:0}.wrap{width:min(700px,100%);margin:auto;padding:36px 22px 70px}.back{color:#536c58;text-decoration:none;font-size:13px}.eyebrow{margin:38px 0 8px;color:#81837b;font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:650}h1{font:500 clamp(34px,6vw,46px)/1.1 Georgia,serif;letter-spacing:-.04em;margin:0 0 10px}.intro{color:#74766f;font-size:14px;line-height:1.6;margin:0 0 30px}.panel{background:#fff;border:1px solid #e6e3dc;border-radius:15px;padding:24px}.field{display:grid;gap:8px;margin-bottom:21px}.field label{font-size:13px;font-weight:620}.field input,.field select,.field textarea{height:44px;border:1px solid #deddd5;border-radius:9px;padding:0 12px;font:inherit;font-size:14px;background:#fff;color:#252821}.field textarea{height:90px;padding:12px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:3px solid #dce8dc;border-color:#719078}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.button{border:0;border-radius:9px;background:#294b3b;color:#fff;padding:12px 17px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}.button:disabled{opacity:.55;cursor:wait}.error{min-height:20px;color:#a53e35;font-size:13px;margin:12px 0 0}.note{padding:12px 14px;border-radius:9px;background:#f4f4ef;color:#77796f;font-size:12px;line-height:1.5;margin-bottom:20px}@media(max-width:520px){.panel{padding:18px}.row{grid-template-columns:1fr;gap:0}}
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <a class="back" href="/">← Kembali ke buku</a>
+      <p class="eyebrow">Buku baru · 1 dari 5</p>
+      <h1>Mulai dari fondasi.</h1>
+      <p class="intro">Tentukan jenis buku dan profil suara. Detail lainnya bisa Anda lengkapi di langkah berikutnya.</p>
+      <form class="panel" id="create-book">
+        <div class="field"><label for="title">Judul sementara</label><input id="title" name="title" maxlength="160" required placeholder="Contoh: Kota di ujung musim" /></div>
+        <div class="field"><label for="summary">Gagasan utama <span style="font-weight:400;color:#85867e">(opsional)</span></label><textarea id="summary" name="summary" maxlength="4000" placeholder="Apa yang ingin Anda ceritakan?"></textarea></div>
+        <div class="row">
+          <div class="field"><label for="kind">Jenis buku</label><select id="kind" name="kind"><option value="fiction">Fiksi</option><option value="nonfiction">Nonfiksi</option></select></div>
+          <div class="field"><label for="words">Target kata</label><input id="words" name="targetWordCount" type="number" min="500" max="1000000" value="30000" required /></div>
+        </div>
+        <div class="field"><label for="voice">Profil suara</label><select id="voice" name="voiceProfileId" required><option value="">Pilih profil suara</option>{result.results.map((profile)=><option value={profile.id} data-version={profile.version}>{profile.name} · v{profile.version}</option>)}</select></div>
+        {!result.results.length && <div class="note">Belum ada profil suara siap. <a href="/voices/new" style="color:#48634d">Buat profil suara</a>, lalu kembali ke langkah ini.</div>}
+        <button class="button" type="submit" disabled={!result.results.length}>Buat blueprint</button>
+        <p class="error" id="error" role="status" aria-live="polite"></p>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector<HTMLFormElement>("#create-book")!;
+      const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+      const error = document.querySelector<HTMLElement>("#error")!;
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const voice = document.querySelector("#voice")!;
+        const selectedVersion = voice.querySelector("option:checked")?.getAttribute("data-version") ?? "";
+        button.disabled = true;
+        error.textContent = "Menyimpan blueprint…";
+        try {
+          const response = await fetch("/api/books", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: data.get("title"), summary: data.get("summary"), kind: data.get("kind"),
+              targetWordCount: Number(data.get("targetWordCount")),
+              voiceProfileId: data.get("voiceProfileId"), voiceProfileVersion: Number(selectedVersion),
+            }),
+          });
+          const result: unknown = await response.json();
+          const payload = result as { error?: unknown; book?: { id?: unknown } };
+          if (!response.ok || typeof payload.book?.id !== "string") {
+            throw new Error(payload.error === "not_authenticated" ? "Sesi berakhir. Masuk kembali lalu coba lagi." : "Blueprint belum tersimpan. Periksa isian dan coba lagi.");
+          }
+          window.location.assign(`/books/${payload.book.id}`);
+        } catch (cause) {
+          error.textContent = cause instanceof Error ? cause.message : "Terjadi kendala. Coba lagi.";
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
+
+
