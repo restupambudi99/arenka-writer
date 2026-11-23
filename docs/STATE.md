@@ -18,34 +18,34 @@ Terakhir diperbarui: 2026-11-23
 
 ## Selesai
 
-- [x] Peta antarmuka referensi dan spesifikasi fitur Arenka orisinal.
+- [x] Peta referensi dan spesifikasi fungsional Arenka orisinal.
 - [x] Scaffold Astro + EmDash Cloudflare, D1/R2, Durable Object, passkey, health route, dan katalog model terlindungi session.
-- [x] Migrasi domain buku, profil suara, bab, revisi, ekspor, dan pemakaian AI.
-- [x] UI koleksi buku, profil suara, wizard blueprint lima tahap, dan workspace naskah.
-- [x] API buku/bab/revisi dengan owner session, validasi, Origin check, dan revision cursor.
-- [x] Riwayat revisi, pratinjau, pemulihan sebagai revisi baru, dan pengurutan bab.
-- [x] Profil suara multi-versi: daftar/detail, pratinjau versi lama, simpan versi baru, dan jumlah buku per versi.
-- [x] `.dev.vars` lokal diabaikan Git; nilai key tidak pernah dikirim ke gateway.
-- [x] `npm run typecheck` lulus tanpa error/warning/hint (24 file).
-- [x] `npm run build` lulus; tersisa peringatan bundle frontend >500 KB dan Wrangler tidak dapat menulis log di luar workspace.
+- [x] UI koleksi buku, pencarian/filter, arsip/pulihkan, profil suara multi-versi, wizard blueprint lima tahap, outline versi, workspace, riwayat revisi, preview PDF, persetujuan bab, dan ekspor R2.
+- [x] API domain dengan owner session, same-origin mutation, validasi ukuran JSON, validasi owner, dan konflik revisi/outline.
+- [x] PDF Workers-compatible dari revisi yang sudah disetujui; source revision IDs dicatat D1, berkas privat di R2, unduh ulang memeriksa owner.
+- [x] `.dev.vars` lokal diabaikan Git; nilai key tidak dikirim ke gateway.
+- [x] `npm run typecheck` lulus tanpa error/warning/hint (33 file).
+- [x] `npm run build` lulus; peringatan bundle frontend >500 KB dan Wrangler log di luar workspace masih ada.
+- [x] Resource baru Cloudflare Arenkabiz: D1 `arenka-writer`, R2 `arenka-writer-media`; ID D1 tersimpan di `wrangler.jsonc`.
 
 ## Berikutnya
 
-- [ ] Lengkapi duplicate/arsip profil suara.
-- [ ] Lengkapi metadata riwayat revisi dan kontrol penamaan bab.
-- [ ] Rancang kuota, rate limit, dan ledger sebelum mengaktifkan chat AI.
-- [ ] Verifikasi kontrak 9routers sebelum request pertama.
-- [ ] Implementasikan Preview/PDF dan unduhan R2.
-- [ ] Terapkan migrasi D1 lalu siapkan resource, binding, domain, dan deploy Cloudflare.
-- [ ] Pecah bundle besar setelah UI editor lengkap.
+- [ ] Terapkan migration 0001–0004 ke D1 production baru.
+- [ ] Verifikasi EmDash migrasi/setup di Cloudflare; jangan menimpa resource D1 lain.
+- [ ] Set secret AI production jika kredensial sudah disiapkan; verifikasi kontrak gateway sebelum chat aktif.
+- [ ] Deploy Worker dan custom domain `writer.arenka.biz.id`, lalu smoke check.
+- [ ] Lengkapi duplikasi/arsip profil suara dan kontrol penamaan bab.
+- [ ] Rancang kuota/rate limit/ledger sebelum chat AI dibuka.
+- [ ] Lanjutkan audit security/privacy dan batas ukuran/retensi ekspor.
+- [ ] Pecah bundel admin/editor setelah fungsi stabil.
 
 ## Keputusan dan batas
 
 - AI hanya memberi usulan; tidak menimpa naskah otomatis.
 - Browser referensi tidak membuktikan detail backend.
-- EmDash mengelola admin/session; data produk Arenka menggunakan tabel terpisah.
-- Owner selalu dari session, tidak dari request body; mutasi juga cek same-origin.
-- Pulihkan revisi membuat snapshot baru dan mempertahankan versi lama.
-- Belum ada deploy, penerapan migrasi Cloudflare, atau request ke 9routers.
+- EmDash mengelola admin/session; data produk Arenka memakai tabel terpisah.
+- Owner API berasal dari session, mutasi cek same-origin, dan data dibatasi per owner.
+- Pulihkan revisi membuat snapshot baru dan mempertahankan revisi lama.
+- Preview menampilkan revisi aktif; ekspor hanya mengambil snapshot yang disetujui.
 - Jangan commit `.dev.vars`, `.env`, atau secret lain.
 
