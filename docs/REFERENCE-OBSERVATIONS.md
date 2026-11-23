@@ -60,6 +60,46 @@ teks disampaikan sebagai ringkasan, bukan salinan copy.
   ekspor tanpa AI. Gaya nomor halaman daftar isi dapat dipilih.
 - Tombol akhir membuat workspace buku; tombol tersebut tidak ditekan.
 
+### Workspace buku
+
+Workspace yang diberikan pengguna dapat diamati dalam keadaan tanpa bab.
+Catatan berikut merangkum kontrol dan alur, tanpa menyimpan judul, sinopsis,
+nama pemilik, atau isi buku.
+
+- Header menyediakan kembali ke koleksi, panduan menulis, pengaturan buku,
+  arsip, tampilan baca penuh, dan unduh.
+- Alur utama diurutkan sebagai Blueprint → Outline → Naskah → Preview &
+  unduh. Blueprint dijelaskan sebagai arah buku (premis, pembaca, tujuan,
+  batasan) dengan riwayat versi. Outline menyusun urutan/tujuan bab dan
+  harus disetujui bersama Blueprint sebelum mulai menulis. Bab dapat ditulis
+  manual atau lewat chat. Perubahan naskah disebut tersimpan otomatis dan
+  versi dapat disetujui.
+- Panel Bagian menunjukkan progres outline, daftar bab, catatan ide, dan
+  konsistensi. Konsistensi menyimpan temuan serta catatan fakta/tokoh/detail.
+  Pemeriksaan otomatis berjalan saat bab disetujui; tombol pemeriksaan manual
+  memakai satu interaksi AI. UI menyebut temuan tidak mengubah naskah atau
+  persetujuan otomatis.
+- Bagian tambahan mencakup Sumber (unggah TXT, PDF, DOCX dengan batas ukuran
+  dan jumlah file), Riset (hasil diskusi Researcher yang dapat disimpan untuk
+  Blueprint/Outline), Catatan ide, Konsistensi, serta Pembuka & penutup.
+- Pembuka/penutup mencakup halaman seperti kata pengantar/persembahan dan
+  epilog/tentang penulis; posisinya sebelum daftar isi atau setelah bab akhir.
+  Daftar pustaka dibuat dari sitasi yang disisipkan lewat toolbar.
+- Tab Asisten menyediakan sesi/riwayat percakapan, informasi konteks buku,
+  sesi baru, mode Penulis dan Riset, pemilih model, input instruksi, serta
+  penambahan gambar/referensi. Tidak ada prompt dikirim saat observasi.
+- Preview & unduh memisahkan pratinjau, tata letak, hasil ekspor PDF, dan
+  checklist siap terbit. PDF final nonaktif saat belum ada bab.
+- Checklist mencakup status penulisan/persetujuan bab, judul bab, temuan
+  konsistensi, sitasi dan bibliografi, judul/penulis, sampul, teks alternatif
+  gambar, nomor halaman, halaman hak cipta dan tentang penulis. Pembaca juga
+  dapat menandai pemeriksaan manual seperti membaca naskah penuh, izin materi
+  pihak ketiga, sinopsis belakang, dan ISBN bila diperlukan.
+- Pengaturan layout mencakup ukuran/arah halaman, target kata, sampul,
+  tipografi/heading, header, penomoran, dan daftar isi dengan pratinjau.
+  Simpan pengaturan, unggah, buat/arsipkan/hapus, persetujuan bab, jalankan AI,
+  dan ekspor tidak dilakukan.
+
 ### Paket dan pembayaran
 
 - Layar memisahkan ringkasan akses, riwayat transaksi, pembelian/perpanjangan,
@@ -112,6 +152,8 @@ workspace.
 
 ## Batas penelusuran
 
-Editor buku belum diamati karena masuk ke dalamnya memerlukan pembuatan
-workspace. Jangan membuat data di akun referensi untuk meneruskan inspeksi;
-gunakan demo publik atau akun pengujian yang disediakan khusus bila tersedia.
+Editor utama dan seluruh alur AI belum diamati secara interaktif. Jangan
+mengirim prompt, mengunggah berkas, menyetujui bab, atau menambah/menghapus
+konten pada akun referensi untuk meneruskan inspeksi. Alur AI memerlukan
+permintaan eksplisit dan perubahan workspace; gunakan akun uji untuk tahap
+tersebut bila tersedia.
