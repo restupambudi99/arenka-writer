@@ -1,0 +1,119 @@
+---
+import { env } from "cloudflare:workers";
+import { authenticatedOwner } from "../../lib/api";
+import type { Env } from "../../env";
+
+export const prerender = false;
+const ownerId = authenticatedOwner(Astro.locals);
+if (!ownerId) return Astro.redirect("/_emdash/admin");
+const bookId = Astro.params.bookId ?? "";
+const db = (env as Env).DB;
+const book = await db.prepare(
+  `SELECT id, title, summary, kind, stage FROM books WHERE id = ? AND owner_id = ? LIMIT 1`,
+).bind(bookId, ownerId).first<{ id: string; title: string; summary: string; kind: string; stage: string }>();
+if (!book) return Astro.redirect("/");
+const chapterRows = await db.prepare(
+  `SELECT c.id, c.position, c.title, c.purpose, c.approval_status,
+    c.current_revision_id, r.content
+   FROM chapters c LEFT JOIN chapter_revisions r
+     ON r.id = c.current_revision_id AND r.chapter_id = c.id AND r.owner_id = c.owner_id
+   WHERE c.book_id = ? AND c.owner_id = ? ORDER BY c.position`,
+).bind(bookId, ownerId).all<{ id: string; position: number; title: string; purpose: string; approval_status: string; current_revision_id: string | null; content: string | null }>();
+const chapters = chapterRows.results;
+const initial = chapters[0];
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{book.title} · Arenka Writer</title>
+    <style>
+      :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#242720;background:#f7f5f0}*{box-sizing:border-box}body{margin:0}.bar{height:62px;padding:0 22px;border-bottom:1px solid #e6e3dc;background:#fbfaf7;display:flex;align-items:center;gap:20px}.back{color:#526b57;text-decoration:none;font-size:13px}.title{font:500 19px Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stage{margin-left:auto;color:#536b58;background:#edf2eb;padding:7px 10px;border-radius:999px;font-size:11px}.workspace{min-height:calc(100vh - 62px);display:grid;grid-template-columns:260px minmax(0,1fr)}.outline{padding:23px 15px;border-right:1px solid #e6e3dc;background:#fbfaf7}.caption{color:#898a81;text-transform:uppercase;letter-spacing:.08em;font-weight:650;font-size:11px;margin:4px 9px 15px}.chapter{width:100%;border:0;background:transparent;text-align:left;padding:12px 11px;border-radius:9px;color:#62645d;cursor:pointer;font:inherit;font-size:13px;display:flex;gap:10px;align-items:center}.chapter:hover{background:#f0efe9}.chapter[aria-current=true]{background:#e9eee8;color:#294b3b}.number{font-size:11px;color:#92938b;min-width:17px}.new-chapter{margin:12px 9px;border:1px solid #dfded6;background:white;color:#4a604d;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.editor{width:min(900px,100%);margin:0 auto;padding:38px clamp(20px,5vw,64px) 80px}.context{color:#8b8c84;font-size:12px;margin-bottom:11px}.editor h1{font:500 clamp(29px,4vw,38px) Georgia,serif;letter-spacing:-.035em;margin:0 0 24px}.editor textarea{width:100%;min-height:55vh;padding:20px;border:1px solid #e4e1d9;border-radius:12px;background:#fff;color:#34362f;font:17px/1.8 Georgia,serif;resize:vertical;outline-color:#819782}.save-row{display:flex;align-items:center;gap:12px;margin-top:13px}.save{border:0;border-radius:9px;background:#294b3b;color:#fff;padding:11px 16px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.save:disabled{opacity:.55}.status{font-size:12px;color:#7b7d74}.empty{max-width:540px;margin:17vh auto;text-align:center}.empty h1{font:500 30px Georgia,serif}.empty p{color:#77796f;line-height:1.6;font-size:13px}.modal{position:fixed;inset:0;background:#20251c66;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.dialog{width:min(440px,100%);background:white;border-radius:14px;padding:22px}.dialog h2{font:500 23px Georgia,serif;margin:0 0 18px}.dialog label{display:block;font-size:12px;font-weight:600;margin:13px 0 6px}.dialog input,.dialog textarea{width:100%;padding:11px;border:1px solid #deddd5;border-radius:8px;font:inherit}.dialog textarea{resize:vertical}.dialog-actions{display:flex;justify-content:end;gap:8px;margin-top:18px}.cancel,.confirm{border:0;border-radius:8px;padding:10px 13px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.cancel{background:#f0efe9;color:#4c4e48}.confirm{background:#294b3b;color:white}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:720px){.workspace{grid-template-columns:1fr}.outline{border-right:0;border-bottom:1px solid #e6e3dc;padding:12px;display:flex;overflow:auto;gap:4px}.caption{display:none}.chapter{width:auto;white-space:nowrap}.new-chapter{white-space:nowrap;margin:4px}.editor{padding:28px 16px}.editor textarea{min-height:48vh}}
+    </style>
+  </head>
+  <body data-book-id={bookId}>
+    <header class="bar"><a class="back" href="/">← Buku</a><span class="title">{book.title}</span><span class="stage">{book.stage === "blueprint" ? "Blueprint" : book.stage}</span></header>
+    <div class="workspace">
+      <aside class="outline" aria-label="Daftar bab">
+        <p class="caption">Naskah</p>
+        {chapters.map((chapter, index) => <button class="chapter" type="button" data-id={chapter.id} data-title={chapter.title} data-content={chapter.content ?? ""} aria-current={index === 0 ? "true" : "false"}><span class="number">{String(index + 1).padStart(2,"0")}</span>{chapter.title}</button>)}
+        <button class="new-chapter" id="new-chapter" type="button">＋ Bab baru</button>
+      </aside>
+      <main class="editor">
+        {initial ? (
+          <>
+            <p class="context">{book.kind === "fiction" ? "Fiksi" : "Nonfiksi"} · Simpan revisi kapan saja</p>
+            <h1 id="chapter-title">{initial.title}</h1>
+            <label class="sr" for="chapter-content">Isi bab</label>
+            <textarea id="chapter-content" placeholder="Mulai tulis draf bab Anda di sini…">{initial.content ?? ""}</textarea>
+            <div class="save-row"><button class="save" id="save" type="button">Simpan revisi</button><span class="status" id="status" role="status" aria-live="polite">Perubahan tersimpan pada revisi terakhir.</span></div>
+          </>
+        ) : (
+          <section class="empty"><p class="context">BLUEPRINT · {book.kind === "fiction" ? "FIKSI" : "NONFIKSI"}</p><h1>Susun kerangka naskah.</h1><p>Tambahkan bab untuk mulai menulis. Setiap penyimpanan membuat revisi baru agar perubahan dapat ditinjau.</p><button class="save" id="first-chapter" type="button">Buat bab pertama</button></section>
+        )}
+      </main>
+    </div>
+    <div class="modal" id="chapter-modal" hidden>
+      <form class="dialog" id="chapter-form">
+        <h2>Bab baru</h2>
+        <label for="new-title">Judul bab</label><input id="new-title" maxlength="200" required placeholder="Contoh: Ketika semuanya berubah" />
+        <label for="new-purpose">Tujuan bab <span style="font-weight:400;color:#85867e">(opsional)</span></label><textarea id="new-purpose" maxlength="2000" rows="3" placeholder="Apa yang perlu terjadi pada bagian ini?"></textarea>
+        <p class="status" id="chapter-error" role="status" aria-live="polite"></p>
+        <div class="dialog-actions"><button class="cancel" id="cancel" type="button">Batal</button><button class="confirm" type="submit">Buat bab</button></div>
+      </form>
+    </div>
+    <script>
+      const bookId = document.body.dataset.bookId;
+      const api = `/api/books/${bookId}`;
+      const title = document.querySelector<HTMLElement>("#chapter-title");
+      const content = document.querySelector<HTMLTextAreaElement>("#chapter-content");
+      let activeId = document.querySelector<HTMLButtonElement>(".chapter")?.dataset.id;
+      const modal = document.querySelector<HTMLElement>("#chapter-modal")!;
+      const form = document.querySelector<HTMLFormElement>("#chapter-form")!;
+      const error = document.querySelector<HTMLElement>("#chapter-error")!;
+      function selectChapter(button: HTMLButtonElement) {
+        document.querySelectorAll<HTMLButtonElement>(".chapter").forEach((item) => item.setAttribute("aria-current", "false"));
+        button.setAttribute("aria-current", "true");
+        activeId = button.dataset.id;
+        if (title) title.textContent = button.dataset.title ?? "Bab";
+        if (content) content.value = button.dataset.content ?? "";
+        const status = document.querySelector<HTMLElement>("#status");
+        if (status) status.textContent = "Perubahan tersimpan pada revisi terakhir.";
+      }
+      document.querySelectorAll<HTMLButtonElement>(".chapter").forEach((button) => button.addEventListener("click", () => selectChapter(button)));
+      document.querySelector("#save")?.addEventListener("click", async (event) => {
+        if (!activeId || !content) return;
+        const button = event.currentTarget as HTMLButtonElement;
+        const status = document.querySelector<HTMLElement>("#status")!;
+        button.disabled = true; status.textContent = "Menyimpan…";
+        try {
+          const response = await fetch(`${api}/chapters/${activeId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: content.value }) });
+          if (!response.ok) throw new Error();
+          const result: unknown = await response.json();
+          const payload = result as { revisionNumber?: unknown };
+          const selected = document.querySelector<HTMLButtonElement>(`.chapter[data-id="${activeId}"]`);
+          if (selected) selected.dataset.content = content.value;
+          status.textContent = `Tersimpan sebagai revisi ${typeof payload.revisionNumber === "number" ? payload.revisionNumber : "baru"}.`;
+        } catch { status.textContent = "Belum tersimpan. Periksa koneksi lalu coba lagi."; }
+        finally { button.disabled = false; }
+      });
+      function openDialog() { modal.hidden = false; (document.querySelector<HTMLInputElement>("#new-title"))?.focus(); }
+      document.querySelector("#new-chapter")?.addEventListener("click", openDialog);
+      document.querySelector("#first-chapter")?.addEventListener("click", openDialog);
+      document.querySelector("#cancel")?.addEventListener("click", () => { modal.hidden = true; });
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const submit = form.querySelector<HTMLButtonElement>("[type=submit]")!;
+        submit.disabled = true; error.textContent = "Membuat bab…";
+        try {
+          const response = await fetch(`${api}/chapters`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: (document.querySelector<HTMLInputElement>("#new-title"))!.value, purpose: (document.querySelector<HTMLTextAreaElement>("#new-purpose"))!.value }) });
+          if (!response.ok) throw new Error();
+          window.location.reload();
+        } catch { error.textContent = "Bab belum dibuat. Periksa isian dan coba lagi."; submit.disabled = false; }
+      });
+    </script>
+  </body>
+</html>
+
+
