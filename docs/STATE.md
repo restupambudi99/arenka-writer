@@ -36,11 +36,11 @@ Terakhir diperbarui: 2026-11-24
 ## Sisa sebelum rilis produksi
 
 - [x] Terapkan migration D1 0005 batas permintaan AI ke production; tabel dan tracker migration telah diverifikasi via Cloudflare API.
-- [ ] Verifikasi dan selesaikan setup/migrasi EmDash production tanpa menimpa resource D1 lain.
-- [ ] Set secret AI production dan verifikasi format request/response gateway 9routers. Jangan kirim manuskrip pengguna untuk tes tanpa permintaan eksplisit.
-- [ ] Wrangler CLI belum terautentikasi. Dry-run bundle berhasil (sekitar 19,7 MB), tetapi API deployment belum menerima bundle. Inventory Cloudflare tidak menunjukkan Worker Arenka Writer atau custom domain `writer.arenka.biz.id`. Deploy dan smoke test masih perlu dilakukan.
-- [ ] Audit tambahan retensi/ukuran ekspor dan pecah bundle editor/admin setelah fungsi stabil.
-- [ ] Uji pemulihan revisi end-to-end di browser belum berhasil dikonfirmasi pada sesi audit ini.
+- [x] Konfirmasi dari konfigurasi EmDash 1.6.0 bahwa migrasi D1 CMS runtime berjalan otomatis pada request pertama; production masih menunggu deploy dan setup admin awal.
+- [ ] Set secret AI production melalui workflow deployment. Belum mengirim manuskrip uji ke 9routers; verifikasi kontrak gateway tetap pending.
+- [x] Tambahkan workflow GitHub Actions manual untuk build dan deploy Worker. Bootstrap menghapus deklarasi required secrets hanya dari konfigurasi hasil build, deploy Worker pertama, lalu memasang `AI_API_KEY` dan `AI_MODEL` tanpa mencetak nilainya.
+- [ ] Jalankan workflow setelah GitHub Actions secrets `CLOUDFLARE_API_TOKEN`, `AI_API_KEY`, dan `AI_MODEL` tersedia. Wrangler lokal masih tidak terautentikasi; inventory terakhir belum menunjukkan Worker maupun custom domain.
+- [ ] Setelah deploy, selesaikan setup admin EmDash dan smoke test domain; verifikasi kontrak gateway tanpa manuskrip pengguna. Audit tambahan retensi/ukuran ekspor dan pecah bundle editor/admin tetap terbuka. Pemulihan revisi end-to-end belum dikonfirmasi sesi audit.
 
 ## Keputusan dan batas
 
