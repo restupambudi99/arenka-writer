@@ -57,3 +57,4 @@ chunk frontend >500 KB; Wrangler juga mencatat EPERM pada file log di luar
 workspace tanpa menggagalkan build. Chat AI, kuota/ledger, dan pemeriksaan
 kontrak gateway belum selesai. Belum deploy.
 
+
