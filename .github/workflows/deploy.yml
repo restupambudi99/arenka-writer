@@ -44,13 +44,11 @@ jobs:
           printf '%s\n' "$status"
           fingerprint="$(printf '%s\n' "$status" | sed -n 's/^Target fingerprint: //p' | tail -n 1)"
           test -n "$fingerprint"
-          lock_id="$(printf '%s\n' "$status" | sed -n 's/^Migration lock: held since .* (id \(\.*\))$/\1/p' | tail -n 1)"
-          if [ -n "$lock_id" ]; then
-            if [ "$lock_id" != "1795507574959" ]; then
-              echo "Unexpected active migration lock; refusing automatic takeover."
-              exit 1
-            fi
-            npx emdash migrate --wrangler-config wrangler.jsonc --take-over-lock "$lock_id" --expected-target-fingerprint "$fingerprint"
+          if printf '%s\n' "$status" | grep -Fq "(id 1795507574959)"; then
+            npx emdash migrate --wrangler-config wrangler.jsonc --take-over-lock "1795507574959" --expected-target-fingerprint "$fingerprint"
+          elif printf '%s\n' "$status" | grep -q '^Migration lock:'; then
+            echo "Unexpected active migration lock; refusing automatic takeover."
+            exit 1
           else
             npx emdash migrate --wrangler-config wrangler.jsonc --expected-target-fingerprint "$fingerprint"
           fi
