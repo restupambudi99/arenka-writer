@@ -42,3 +42,8 @@ jobs:
           npx wrangler deploy --config dist/server/wrangler.json
           printf '%s' "$AI_API_KEY" | npx wrangler secret put AI_API_KEY --config dist/server/wrangler.json
           printf '%s' "$AI_MODEL" | npx wrangler secret put AI_MODEL --config dist/server/wrangler.json
+      - name: Smoke check public health endpoint
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --retry 8 --retry-all-errors --retry-delay 5 --max-time 20 https://writer.arenka.biz.id/api/health > /tmp/arenka-health.json
+          node --input-type=module -e 'import fs from "node:fs"; const body=JSON.parse(fs.readFileSync("/tmp/arenka-health.json","utf8")); if(body.ok!==true || body.service!=="arenka-writer") process.exit(1); console.log("Public health check passed");'
