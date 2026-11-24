@@ -26,14 +26,14 @@ Terakhir diperbarui: 2026-11-24
 - [x] `.dev.vars` lokal diabaikan Git; nilai key tidak dikirim ke gateway.
 - [x] `npm run typecheck` lulus tanpa error/warning/hint (33 file).
 - [x] `npm run build` lulus; peringatan bundle frontend >500 KB dan Wrangler log di luar workspace masih ada.
-- [x] Resource baru Cloudflare Arenkabiz: D1 `arenka-writer`, R2 `arenka-writer-media`; ID D1 tersimpan di `wrangler.jsonc`.
+- [x] Resource baru Cloudflare Arenkabiz: D1 `arenka-writer`, R2 `arenka-writer-media`, KV `arenka-writer-session`; binding D1/KV, SQLite Durable Object, dan custom domain ada di `wrangler.jsonc`.
 
 ## Berikutnya
 
 - [x] Terapkan migration D1 0001–0004 ke database baru; migration 0002 sekarang aditif agar tabel revisi tidak diganti. Migration tracker D1 sudah diselaraskan.
 - [ ] Verifikasi EmDash migrasi/setup di Cloudflare; jangan menimpa resource D1 lain.
 - [ ] Set secret AI production jika kredensial sudah disiapkan; verifikasi kontrak gateway sebelum chat aktif.
-- [ ] Deploy Worker dan custom domain `writer.arenka.biz.id`, lalu smoke check. Wrangler CLI tidak terautentikasi (token expired); Cloudflare MCP terhubung.
+- [ ] Deploy Worker dan custom domain `writer.arenka.biz.id`, lalu smoke check. Wrangler CLI tidak terautentikasi (token expired); upaya `wrangler login` sedang menunggu OAuth callback.
 - [ ] Lengkapi duplikasi/arsip profil suara dan kontrol penamaan bab.
 - [ ] Rancang kuota/rate limit/ledger sebelum chat AI dibuka.
 - [ ] Lanjutkan audit security/privacy dan batas ukuran/retensi ekspor.
@@ -48,5 +48,6 @@ Terakhir diperbarui: 2026-11-24
 - Pulihkan revisi membuat snapshot baru dan mempertahankan revisi lama.
 - Preview menampilkan revisi aktif; ekspor hanya mengambil snapshot yang disetujui.
 - Jangan commit `.dev.vars`, `.env`, atau secret lain.
+
 
 
