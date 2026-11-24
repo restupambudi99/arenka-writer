@@ -68,6 +68,15 @@ mengirim naskah ke gateway. `npm run typecheck` lulus 34 file tanpa diagnostic;
 `npm run build` berhasil dengan peringatan bundle frontend >500 KB dan Wrangler
 tidak dapat menulis log di luar workspace.
 
-Kontrak respons 9routers untuk chat completion belum diuji langsung. Production
-masih membutuhkan migration 0005, setup EmDash, secrets, autentikasi Wrangler,
-deploy Worker dan pengaitan domain. Jangan anggap layanan sudah aktif.
+Workflow deployment manual tersedia di `.github/workflows/deploy.yml`. Sebelum
+menjalankannya, tambahkan GitHub Actions secrets `CLOUDFLARE_API_TOKEN`,
+`AI_API_KEY`, dan `AI_MODEL`, lalu jalankan workflow **Deploy Arenka Writer**.
+Lihat [panduan deployment](docs/DEPLOYMENT.md). Token Cloudflare memerlukan
+Workers Scripts Editor dan Workers Routes Write untuk zone `arenka.biz.id`.
+Workflow melakukan bootstrap Worker lalu memasang secret AI tanpa mencetak nilainya.
+
+Migration 0005 sudah ada di D1 production. EmDash menjalankan migrasi CMS runtime
+saat Worker menerima request pertama; setelah deploy, selesaikan setup admin
+EmDash di `/_emdash/admin`. Kontrak respons chat completion 9routers belum diuji.
+Jangan anggap layanan aktif sampai workflow sukses, setup admin selesai, dan
+smoke check domain lulus.
