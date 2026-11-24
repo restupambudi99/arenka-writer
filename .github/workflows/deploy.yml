@@ -33,13 +33,16 @@ jobs:
       - run: npm run build
       - name: Apply EmDash database migrations
         shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_MIGRATION_TOKEN }}
         run: |
           set -euo pipefail
-          status="$(npx emdash migrate --status --wrangler-config wrangler.jsonc 2>&1)" || { printf '%s\n' "$status"; exit 1; }
-          printf '%s\n' "$status"
-          fingerprint="$(printf '%s\n' "$status" | sed -n 's/^Target fingerprint: //p' | tail -n 1)"
+          test -n "$CLOUDFLARE_API_TOKEN"
+          status="$(npx emdash migrate --status --wrangler-config wrangler.jsonc 2>&1)" || { printf '%s\\n' "$status"; exit 1; }
+          printf '%s\\n' "$status"
+          fingerprint="$(printf '%s\\n' "$status" | sed -n 's/^Target fingerprint: //p' | tail -n 1)"
           test -n "$fingerprint"
-          lock_id="$(printf '%s\n' "$status" | sed -n 's/^Migration lock: held since .* (id \(.*\))$/\1/p' | tail -n 1)"
+          lock_id="$(printf '%s\\n' "$status" | sed -n 's/^Migration lock: held since .* (id \\(.*\\))$/\\1/p' | tail -n 1)"
           if [ -n "$lock_id" ]; then
             if [ "$lock_id" != "1795507574959" ]; then
               echo "Unexpected active migration lock; refusing automatic takeover."
