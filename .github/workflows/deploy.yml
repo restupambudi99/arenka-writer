@@ -38,11 +38,13 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$CLOUDFLARE_API_TOKEN"
-          status="$(npx emdash migrate --status --wrangler-config wrangler.jsonc 2>&1)" || { printf '%s\n' "$status"; exit 1; }
-          printf '%s\n' "$status"
-          fingerprint="$(printf '%s\n' "$status" | sed -n 's/^Target fingerprint: //p' | tail -n 1)"
+          verification="$(printf 'header = "Authorization: Bearer %s"\\n' "$CLOUDFLARE_API_TOKEN" | curl --config - --silent --show-error https://api.cloudflare.com/client/v4/user/tokens/verify)"
+          printf '%s' "$verification" | node -e 'let s="";process.stdin.on("data",c=>s+=c);process.stdin.on("end",()=>{const r=JSON.parse(s);if(r.success!==true){console.error("Cloudflare migration token verification failed.");process.exit(1)}console.log("Cloudflare migration token verification passed.")})'
+          status="$(npx emdash migrate --status --wrangler-config wrangler.jsonc 2>&1)" || { printf '%s\\n' "$status"; exit 1; }
+          printf '%s\\n' "$status"
+          fingerprint="$(printf '%s\\n' "$status" | sed -n 's/^Target fingerprint: //p' | tail -n 1)"
           test -n "$fingerprint"
-          lock_id="$(printf '%s\n' "$status" | sed -n 's/^Migration lock: held since .* (id \(.*\))$/\1/p' | tail -n 1)"
+          lock_id="$(printf '%s\\n' "$status" | sed -n 's/^Migration lock: held since .* (id \\(.*\\))$/\\1/p' | tail -n 1)"
           if [ -n "$lock_id" ]; then
             if [ "$lock_id" != "1795507574959" ]; then
               echo "Unexpected active migration lock; refusing automatic takeover."
