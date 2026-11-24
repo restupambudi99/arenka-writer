@@ -36,6 +36,21 @@ try { if (latestOutline) outlineChapters = (JSON.parse(latestOutline.outline_jso
     <style>
       :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#242720;background:#f7f5f0}*{box-sizing:border-box}body{margin:0}.bar{height:62px;padding:0 22px;border-bottom:1px solid #e6e3dc;background:#fbfaf7;display:flex;align-items:center;gap:20px}.back{color:#526b57;text-decoration:none;font-size:13px}.title{font:500 19px Georgia,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stage{color:#536b58;background:#edf2eb;padding:7px 10px;border-radius:999px;font-size:11px;text-decoration:none;white-space:nowrap}.stage:first-of-type{margin-left:auto}.workspace{min-height:calc(100vh - 62px);display:grid;grid-template-columns:260px minmax(0,1fr)}.outline{padding:23px 15px;border-right:1px solid #e6e3dc;background:#fbfaf7}.caption{color:#898a81;text-transform:uppercase;letter-spacing:.08em;font-weight:650;font-size:11px;margin:4px 9px 15px}.chapter-row{display:flex;align-items:center;gap:3px}.chapter{min-width:0;flex:1;border:0;background:transparent;text-align:left;padding:12px 11px;border-radius:9px;color:#62645d;cursor:pointer;font:inherit;font-size:13px;display:flex;gap:10px;align-items:center}.chapter:hover{background:#f0efe9}.chapter[aria-current=true]{background:#e9eee8;color:#294b3b}.number{font-size:11px;color:#92938b;min-width:17px}.move-chapter{width:29px;height:29px;border:1px solid transparent;border-radius:7px;background:transparent;color:#626b60;font-size:14px;cursor:pointer}.move-chapter:hover:not(:disabled){background:#eceee8;border-color:#dfe3da}.move-chapter:disabled{opacity:.3;cursor:default}.new-chapter{margin:12px 9px;border:1px solid #dfded6;background:white;color:#4a604d;border-radius:8px;padding:9px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.editor{width:min(900px,100%);margin:0 auto;padding:38px clamp(20px,5vw,64px) 80px}.context{color:#8b8c84;font-size:12px;margin-bottom:11px}.editor h1{font:500 clamp(29px,4vw,38px) Georgia,serif;letter-spacing:-.035em;margin:0 0 24px}.editor textarea{width:100%;min-height:55vh;padding:20px;border:1px solid #e4e1d9;border-radius:12px;background:#fff;color:#34362f;font:17px/1.8 Georgia,serif;resize:vertical;outline-color:#819782}.save-row{display:flex;align-items:center;gap:12px;margin-top:13px}.save{border:0;border-radius:9px;background:#294b3b;color:#fff;padding:11px 16px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.save:disabled{opacity:.55}.history-button{border:1px solid #dfded6;border-radius:9px;background:#fff;color:#435c47;padding:10px 13px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.history-button:hover{background:#f1f2ed}.status{font-size:12px;color:#7b7d74}.revision-dialog{width:min(720px,100%);max-height:min(84vh,760px);overflow:auto}.revision-dialog h2{margin-bottom:8px}.revision-list{display:grid;gap:7px;max-height:240px;overflow:auto}.revision-item{width:100%;display:flex;justify-content:space-between;gap:10px;text-align:left;padding:11px 12px;border:1px solid #e4e2da;border-radius:9px;background:#fff;color:#30332d;font-family:inherit;cursor:pointer}.revision-item:hover,.revision-item[aria-pressed=true]{border-color:#94a994;background:#f4f6f2}.revision-meta{color:#85877e;font-size:11px;white-space:nowrap}.revision-preview{margin-top:16px;padding:15px;border:1px solid #e5e3dc;border-radius:10px;background:#faf9f6}.revision-preview h3{margin:0 0 10px;font:500 17px Georgia,serif}.revision-preview pre{max-height:210px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 Georgia,serif;color:#55574f}.revision-preview[hidden]{display:none}.revision-dialog .dialog-actions{position:sticky;bottom:-22px;padding:12px 0 0;background:#fff}.empty{max-width:540px;margin:17vh auto;text-align:center}.empty h1{font:500 30px Georgia,serif}.empty p{color:#77796f;line-height:1.6;font-size:13px}.modal{position:fixed;inset:0;background:#20251c66;display:grid;place-items:center;padding:20px}.modal[hidden]{display:none}.dialog{width:min(440px,100%);background:white;border-radius:14px;padding:22px}.dialog h2{font:500 23px Georgia,serif;margin:0 0 18px}.dialog label{display:block;font-size:12px;font-weight:600;margin:13px 0 6px}.dialog input,.dialog textarea{width:100%;padding:11px;border:1px solid #deddd5;border-radius:8px;font:inherit}.dialog textarea{resize:vertical}.dialog-actions{display:flex;justify-content:end;gap:8px;margin-top:18px}.cancel,.confirm{border:0;border-radius:8px;padding:10px 13px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}.cancel{background:#f0efe9;color:#4c4e48}.confirm{background:#294b3b;color:white}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:720px){.workspace{grid-template-columns:1fr}.outline{border-right:0;border-bottom:1px solid #e6e3dc;padding:12px;display:flex;overflow:auto;gap:4px}.caption{display:none}.chapter-row{flex:0 0 auto}.chapter{width:auto;white-space:nowrap}.move-chapter{flex:0 0 27px}.new-chapter{white-space:nowrap;margin:4px}.editor{padding:28px 16px}.editor textarea{min-height:48vh}}
     </style>
+    <style>
+      .ai-dialog{width:min(700px,calc(100vw - 24px));max-height:min(88dvh,780px);overflow:auto;padding:clamp(18px,4vw,28px);border:1px solid #dfded6;border-radius:15px;background:#fff;color:#292c26}
+      .ai-dialog::backdrop{background:#20251c88}
+      .ai-dialog h2{margin:0 0 8px;font:500 25px/1.2 Georgia,serif}
+      .ai-dialog .ai-intro,.ai-dialog .ai-privacy{color:#575a52;font-size:13px;line-height:1.6}
+      .ai-dialog label{display:block;margin:17px 0 7px;font-size:13px;font-weight:620}
+      .ai-dialog select,.ai-dialog textarea{width:100%;border:1px solid #85867e;border-radius:8px;background:#fff;color:#292c26;font:inherit;padding:11px}
+      .ai-dialog textarea{min-height:100px;resize:vertical;line-height:1.55}
+      .ai-dialog :focus-visible{outline:3px solid #55785c;outline-offset:2px}
+      .ai-privacy{padding:12px 14px;background:#f4f4ef;border-radius:8px}
+      .ai-result{max-height:36vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:15px;border:1px solid #e3e1d9;border-radius:9px;background:#fbfaf7;font:15px/1.7 Georgia,serif}
+      .save-row .history-button,.ai-dialog .history-button{border-color:#85867e;min-height:44px}
+      .ai-result[hidden]{display:none}.ai-controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.ai-status{min-height:22px;margin:10px 0 0;color:#474d43;font-size:13px}
+      @media(max-width:600px){.ai-dialog{max-height:90dvh}.ai-controls{display:grid;grid-template-columns:1fr}.ai-controls button{min-height:44px}.save-row{flex-wrap:wrap}.save-row .status{flex-basis:100%}}
+    </style>
   </head>
   <body data-book-id={bookId}>
     <header class="bar"><a class="back" href="/">← Buku</a><span class="title">{book.title}</span><a class="stage" href={`/books/new?bookId=${book.id}&step=2`}>Blueprint</a><a class="stage" href={`/books/${book.id}/outline`}>Outline</a><span class="stage">Naskah</span><a class="stage" href={`/books/${book.id}/preview`}>Preview & unduh</a></header>
@@ -58,13 +73,25 @@ try { if (latestOutline) outlineChapters = (JSON.parse(latestOutline.outline_jso
             <h1 id="chapter-title">{initial.title}</h1>
             <label class="sr" for="chapter-content">Isi bab</label>
             <textarea id="chapter-content" placeholder="Mulai tulis draf bab Anda di sini…">{initial.content ?? ""}</textarea>
-            <div class="save-row"><button class="save" id="save" type="button">Simpan revisi</button><button class="history-button" id="show-history" type="button">Riwayat revisi</button><span class="status" id="status" role="status" aria-live="polite">Perubahan tersimpan pada revisi terakhir.</span></div>
+            <div class="save-row"><button class="save" id="save" type="button">Simpan revisi</button><button class="history-button" id="show-history" type="button">Riwayat revisi</button><button class="history-button" id="open-ai" type="button">Minta saran AI</button><span class="status" id="status" role="status" aria-live="polite">Perubahan tersimpan pada revisi terakhir.</span></div>
           </>
         ) : (
           <section class="empty"><p class="context">OUTLINE · {book.kind === "fiction" ? "FIKSI" : "NONFIKSI"}</p><h1>Kerangka siap menjadi naskah.</h1><p>Bab dapat dibuat dari outline tersimpan, lalu Anda dapat menulis dan meninjau revisinya.</p><button class="save" id="first-chapter" type="button">Buat bab pertama</button><a class="history-button" href={`/books/${bookId}/outline`}>Kembali ke outline</a></section>
         )}
       </main>
     </div>
+    <dialog class="ai-dialog" id="ai-dialog" aria-labelledby="ai-heading">
+      <h2 id="ai-heading">Saran untuk bab ini</h2>
+      <p class="ai-intro">Saran muncul sebagai teks terpisah. Arenka tidak mengubah atau menyimpan naskah sebelum Anda menerapkannya dan menyimpan revisi.</p>
+      <p class="ai-privacy">Saat Anda meminta saran, Arenka mengirim instruksi, blueprint buku, profil suara yang dipilih, dan hingga 20.000 karakter terakhir dari draf bab ke 9routers. Batas akun: 4 permintaan per menit dan 30 per hari UTC.</p>
+      <label for="ai-action">Jenis bantuan</label>
+      <select id="ai-action"><option value="continue">Lanjutkan draf</option><option value="rewrite">Tulis ulang bab</option><option value="brainstorm">Kembangkan gagasan</option><option value="critique">Tinjau draf</option></select>
+      <label for="ai-instruction">Arahan untuk 9routers</label>
+      <textarea id="ai-instruction" maxlength="8000" required placeholder="Contoh: lanjutkan setelah adegan terakhir dan pertahankan sudut pandang orang pertama."></textarea>
+      <div class="ai-controls"><button class="save" id="ai-submit" type="button">Minta saran</button><button class="history-button" id="ai-copy" type="button" hidden>Salin hasil</button><button class="save" id="ai-apply" type="button" hidden>Sisipkan pada kursor</button><button class="history-button" id="ai-close" type="button">Tutup</button></div>
+      <p class="ai-status" id="ai-status" role="status" aria-live="polite"></p>
+      <pre class="ai-result" id="ai-result" hidden></pre>
+    </dialog>
     <div class="modal" id="chapter-modal" hidden>
       <form class="dialog" id="chapter-form">
         <h2>Bab baru</h2>
@@ -95,7 +122,19 @@ try { if (latestOutline) outlineChapters = (JSON.parse(latestOutline.outline_jso
       const selectedAtLoad = document.querySelector<HTMLButtonElement>('.chapter[aria-current="true"]');
       let activeId = selectedAtLoad?.dataset.id;
       let activeRevisionId = selectedAtLoad?.dataset.currentRevisionId || null;
+      let revisionSource: "manual" | "ai_suggestion" = "manual";
       let savedContent = content?.value ?? "";
+      const aiDialog = document.querySelector<HTMLDialogElement>("#ai-dialog");
+      const aiInstruction = document.querySelector<HTMLTextAreaElement>("#ai-instruction");
+      const aiAction = document.querySelector("#ai-action") as HTMLSelectElement | null;
+      const aiStatus = document.querySelector<HTMLElement>("#ai-status");
+      const aiResult = document.querySelector<HTMLElement>("#ai-result");
+      const aiSubmit = document.querySelector<HTMLButtonElement>("#ai-submit");
+      const aiApply = document.querySelector<HTMLButtonElement>("#ai-apply");
+      const aiCopy = document.querySelector<HTMLButtonElement>("#ai-copy");
+      let aiController: AbortController | null = null;
+      let currentSuggestion = "";
+      let suggestionAction = "";
       const modal = document.querySelector<HTMLElement>("#chapter-modal")!;
       const form = document.querySelector<HTMLFormElement>("#chapter-form")!;
       const error = document.querySelector<HTMLElement>("#chapter-error")!;
@@ -108,6 +147,8 @@ try { if (latestOutline) outlineChapters = (JSON.parse(latestOutline.outline_jso
       let inspectedRevisionId: string | null = null;
       function selectChapter(button: HTMLButtonElement) {
         if (content && content.value !== savedContent && !window.confirm("Perubahan pada bab ini belum disimpan. Tinggalkan perubahan tersebut?")) return;
+        aiDialog?.close();
+        revisionSource = "manual";
         document.querySelectorAll<HTMLButtonElement>(".chapter").forEach((item) => item.setAttribute("aria-current", "false"));
         button.setAttribute("aria-current", "true");
         activeId = button.dataset.id;
@@ -153,7 +194,7 @@ try { if (latestOutline) outlineChapters = (JSON.parse(latestOutline.outline_jso
         const status = document.querySelector<HTMLElement>("#status")!;
         button.disabled = true; status.textContent = "Menyimpan…";
         try {
-          const response = await fetch(`${api}/chapters/${activeId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: content.value, expectedCurrentRevisionId: activeRevisionId }) });
+          const response = await fetch(`${api}/chapters/${activeId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: content.value, expectedCurrentRevisionId: activeRevisionId, source: revisionSource }) });
           if (response.status === 409) throw new Error("Naskah berubah di sesi lain. Muat ulang halaman sebelum menyimpan lagi.");
           if (!response.ok) throw new Error("Belum tersimpan. Periksa koneksi lalu coba lagi.");
           const result: unknown = await response.json();
@@ -167,10 +208,96 @@ try { if (latestOutline) outlineChapters = (JSON.parse(latestOutline.outline_jso
             selected.dataset.revisionNumber = String(payload.revisionNumber ?? "");
           }
           savedContent = content.value;
+          revisionSource = "manual";
           status.textContent = `Tersimpan sebagai revisi ${typeof payload.revisionNumber === "number" ? payload.revisionNumber : "baru"}.`;
         } catch (cause) { status.textContent = cause instanceof Error ? cause.message : "Belum tersimpan. Periksa koneksi lalu coba lagi."; }
         finally { button.disabled = false; }
       });
+      document.querySelector("#open-ai")?.addEventListener("click", () => {
+        if (!activeId || !aiDialog || !aiInstruction) return;
+        aiInstruction.value = "";
+        if (aiStatus) aiStatus.textContent = "";
+        if (aiResult) { aiResult.hidden = true; aiResult.textContent = ""; }
+        if (aiApply) aiApply.hidden = true;
+        if (aiCopy) aiCopy.hidden = true;
+        currentSuggestion = ""; suggestionAction = "";
+        aiDialog.showModal();
+        aiInstruction.focus();
+      });
+      aiDialog?.addEventListener("close", () => { aiController?.abort(); aiController = null; });
+      aiAction?.addEventListener("change", () => {
+        currentSuggestion = ""; suggestionAction = "";
+        if (aiResult) { aiResult.hidden = true; aiResult.textContent = ""; }
+        if (aiApply) aiApply.hidden = true;
+        if (aiCopy) aiCopy.hidden = true;
+        if (aiStatus) aiStatus.textContent = "";
+      });
+      aiSubmit?.addEventListener("click", async () => {
+        if (!activeId || !content || !aiAction || !aiInstruction || !aiStatus || !aiResult) return;
+        if (!aiInstruction.value.trim()) { aiStatus.textContent = "Tulis arahan sebelum meminta saran."; aiInstruction.focus(); return; }
+        aiController = new AbortController();
+        const requestedChapterId = activeId;
+        aiSubmit.disabled = true;
+        if (aiApply) aiApply.hidden = true;
+        if (aiCopy) aiCopy.hidden = true;
+        aiResult.hidden = true;
+        aiStatus.textContent = "Meminta saran. Draf dan konteks buku sedang dikirim ke 9routers…";
+        try {
+          const response = await fetch(`${api}/chapters/${requestedChapterId}/suggest`, {
+            method: "POST", headers: { "Content-Type": "application/json" }, signal: aiController.signal,
+            body: JSON.stringify({ action: aiAction.value, instruction: aiInstruction.value, draft: content.value }),
+          });
+          const payload = await response.json().catch(() => ({})) as { error?: string; suggestion?: string; model?: string; usage?: { inputTokens?: number | null; outputTokens?: number | null } };
+          if (!response.ok) {
+            if (response.status === 429) throw new Error("Batas saran AI tercapai. Coba lagi setelah jendela batas berakhir.");
+            if (response.status === 401) throw new Error("Sesi berakhir. Masuk kembali sebelum meminta saran.");
+            throw new Error("9routers belum dapat menghasilkan saran. Periksa koneksi model dan coba lagi.");
+          }
+          if (typeof payload.suggestion !== "string" || !payload.suggestion.trim()) throw new Error("Respons 9routers tidak berisi saran yang dapat ditampilkan.");
+          currentSuggestion = payload.suggestion;
+          suggestionAction = aiAction.value;
+          aiResult.textContent = currentSuggestion;
+          aiResult.hidden = false;
+          if (aiApply) {
+            aiApply.hidden = suggestionAction === "critique";
+            aiApply.textContent = suggestionAction === "rewrite" ? "Ganti isi bab" : "Sisipkan pada kursor";
+          }
+          if (aiCopy) aiCopy.hidden = false;
+          const input = payload.usage?.inputTokens;
+          const output = payload.usage?.outputTokens;
+          const counts = typeof input === "number" && typeof output === "number" ? ` · ${input.toLocaleString("id-ID")} token masuk, ${output.toLocaleString("id-ID")} keluar` : "";
+          aiStatus.textContent = `Usulan dari ${typeof payload.model === "string" ? payload.model : "model terpilih"}${counts}. Tinjau sebelum digunakan.`;
+        } catch (cause) {
+          if (!aiController?.signal.aborted) aiStatus.textContent = cause instanceof Error ? cause.message : "Saran belum tersedia. Coba lagi.";
+        } finally {
+          aiSubmit.disabled = false;
+          aiController = null;
+        }
+      });
+      aiApply?.addEventListener("click", () => {
+        if (!content || !currentSuggestion || !suggestionAction) return;
+        if (suggestionAction === "rewrite") {
+          if (!window.confirm("Ganti isi editor dengan usulan? Draf tersimpan tidak berubah sampai Anda menyimpan revisi.")) return;
+          content.value = currentSuggestion;
+          content.focus();
+          content.setSelectionRange(content.value.length, content.value.length);
+        } else {
+          const start = content.selectionStart;
+          const end = content.selectionEnd;
+          const prefix = start > 0 && content.value[start - 1] !== "\n" ? "\n\n" : "";
+          content.setRangeText(`${prefix}${currentSuggestion}`, start, end, "end");
+          content.focus();
+        }
+        revisionSource = "ai_suggestion";
+        document.querySelector<HTMLElement>("#status")!.textContent = "Usulan dimasukkan ke editor. Simpan revisi untuk menyimpannya.";
+        aiDialog?.close();
+      });
+      aiCopy?.addEventListener("click", async () => {
+        if (!currentSuggestion || !aiStatus) return;
+        try { await navigator.clipboard.writeText(currentSuggestion); aiStatus.textContent = "Usulan disalin."; }
+        catch { aiStatus.textContent = "Clipboard tidak tersedia. Pilih dan salin teks usulan secara manual."; }
+      });
+      document.querySelector("#ai-close")?.addEventListener("click", () => aiDialog?.close());
       document.querySelector("#show-history")?.addEventListener("click", async () => {
         if (!activeId) return;
         if (content && content.value !== savedContent) {
@@ -288,7 +415,6 @@ try { if (latestOutline) outlineChapters = (JSON.parse(latestOutline.outline_jso
     </script>
   </body>
 </html>
-
 
 
 
