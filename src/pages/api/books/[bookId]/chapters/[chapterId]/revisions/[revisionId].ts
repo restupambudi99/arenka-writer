@@ -11,8 +11,11 @@ export const GET: APIRoute = async ({ locals, params }) => {
   const { bookId = "", chapterId = "", revisionId = "" } = params;
   if (![bookId, chapterId, revisionId].every(validId)) return jsonError("revision_not_found", 404);
   const revision = await (env as Env).DB.prepare(
-    `SELECT r.id, r.revision_number, r.content, r.source, r.restored_from_revision_id, r.created_at
+    `SELECT r.id, r.revision_number, r.content,
+      CASE WHEN l.revision_id IS NOT NULL THEN 'restore' ELSE r.source END AS source,
+      l.restored_from_revision_id, r.created_at
      FROM chapter_revisions r JOIN chapters c ON c.id = r.chapter_id AND c.owner_id = r.owner_id
+     LEFT JOIN revision_restore_links l ON l.revision_id = r.id AND l.chapter_id = r.chapter_id AND l.owner_id = r.owner_id
      WHERE c.book_id = ? AND c.id = ? AND c.owner_id = ? AND r.id = ? LIMIT 1`,
   ).bind(bookId, chapterId, ownerId, revisionId).first<{
     id: string;
@@ -65,14 +68,16 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
 
   try {
     const result = await db.batch([
-      db.prepare("INSERT INTO chapter_revisions (id, owner_id, chapter_id, revision_number, content, source, restored_from_revision_id) VALUES (?, ?, ?, ?, ?, 'restore', ?)")
-        .bind(newRevisionId, ownerId, chapterId, revisionNumber, source.content, revisionId),
+      db.prepare("INSERT INTO chapter_revisions (id, owner_id, chapter_id, revision_number, content, source) VALUES (?, ?, ?, ?, ?, 'manual')")
+        .bind(newRevisionId, ownerId, chapterId, revisionNumber, source.content),
+      db.prepare("INSERT INTO revision_restore_links (revision_id, owner_id, chapter_id, restored_from_revision_id) VALUES (?, ?, ?, ?)")
+        .bind(newRevisionId, ownerId, chapterId, revisionId),
       db.prepare("UPDATE chapters SET current_revision_id = ?, approved_revision_id = NULL, approval_status = 'draft', updated_at = ? WHERE id = ? AND book_id = ? AND owner_id = ? AND current_revision_id IS ?")
         .bind(newRevisionId, now, chapterId, bookId, ownerId, body.expectedCurrentRevisionId),
       db.prepare("UPDATE books SET updated_at = ? WHERE id = ? AND owner_id = ?")
         .bind(now, bookId, ownerId),
     ]);
-    if (!result[1].meta.changes) {
+    if (!result[2].meta.changes) {
       await db.prepare("DELETE FROM chapter_revisions WHERE id = ? AND chapter_id = ? AND owner_id = ?")
         .bind(newRevisionId, chapterId, ownerId).run();
       return jsonError("stale_revision", 409);
