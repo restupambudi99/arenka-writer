@@ -2,7 +2,7 @@
 
 Arenka Writer memakai Astro + EmDash pada Cloudflare Workers, dengan D1, R2,
 dan adapter server-side untuk 9routers. Aplikasi mencakup wizard blueprint,
-outline versi, workspace revisi, preview, dan ekspor PDF privat.
+outline versi, workspace revisi, preview, persetujuan bab, dan ekspor PDF privat.
 
 ## Siapkan AI lokal
 
@@ -32,11 +32,12 @@ Terapkan migration berurutan. Konfigurasi lokal:
 npm run db:migrate:local
 ```
 
-Resource production D1 `arenka-writer`, R2 `arenka-writer-media`, dan KV `arenka-writer-session` dibuat di akun
-Cloudflare pemilik zone `arenka.biz.id`. Migrasi domain 0001–0004 sudah ada di
-D1; migrasi 0005 masih perlu diterapkan sebelum endpoint saran AI dipakai.
-Worker dan subdomain belum dideploy. Secret produksi dimasukkan lewat
-`wrangler secret put AI_API_KEY` dan `wrangler secret put AI_MODEL`.
+Resource production D1 `arenka-writer`, R2 `arenka-writer-media`, dan KV
+`arenka-writer-session` sudah dibuat di akun Cloudflare pemilik zone
+`arenka.biz.id`. Migrasi D1 0001–0004 telah diterapkan; migration 0005 masih
+perlu diterapkan sebelum endpoint saran AI dirilis. Worker dan subdomain belum
+dideploy. Secret produksi dimasukkan lewat `wrangler secret put AI_API_KEY`
+dan `wrangler secret put AI_MODEL`.
 
 ## API utama
 
@@ -47,24 +48,27 @@ owner. Mutasi memeriksa Origin dan ukuran JSON.
 - `/api/books/:bookId/outline`: simpan outline berversi dengan conflict cursor.
 - `/api/books/:bookId/chapters/*`: bab, revisi, susunan, dan persetujuan snapshot.
 - `/api/books/:bookId/chapters/:chapterId/suggest`: hasilkan saran AI untuk bab aktif.
-  Instruksi, blueprint, profil suara versi buku, dan bagian akhir draf dikirim ke
-  gateway hanya ketika endpoint dipanggil; hasil tidak disimpan otomatis.
+  Saat dipanggil, instruksi, blueprint, profil suara versi buku, dan hingga
+  20.000 karakter terakhir draf dikirim ke gateway. Hasil tampil terpisah dan
+  baru tersimpan sebagai revisi saat penulis menerapkannya.
 - `/api/books/:bookId/preview`: data preview dari revisi aktif/disetujui.
 - `/api/books/:bookId/export`: buat PDF dari revisi yang disetujui, simpan D1/R2.
 - `/api/exports/:exportId`: unduh ulang dengan pemeriksaan owner.
 - `/api/voice-profiles/*`: profil suara berversi.
 
-## Pemeriksaan dan batas
+## Pemeriksaan dan status rilis
 
 Endpoint saran membatasi setiap akun hingga 4 permintaan per menit dan 30 per
-hari UTC. Pemakaian dicatat di `ai_usage` menggunakan jumlah token yang
-dikembalikan gateway; bila gateway tidak menyertakannya, nilainya kosong. Batas
-ini mengatur jumlah permintaan, bukan biaya token.
+hari UTC. Pemakaian dicatat di `ai_usage` menggunakan jumlah token dari gateway;
+bila tidak disertakan, nilainya kosong. Ini batas jumlah permintaan, bukan kuota
+biaya token.
 
-`npm run typecheck` dan `npm run build` berhasil. Build memperingatkan chunk
-frontend >500 KB dan Wrangler tidak dapat menulis log di luar workspace, namun
-build selesai. UI saran AI, migrasi 0005 production, secret produksi, setup
-EmDash production, dan deploy masih belum selesai.
+Uji lokal mencakup alur blueprint, outline, pembuatan bab, revisi, preview,
+persetujuan, dan ekspor PDF. Form saran AI dan validasi input diuji tanpa
+mengirim naskah ke gateway. `npm run typecheck` lulus 34 file tanpa diagnostic;
+`npm run build` berhasil dengan peringatan bundle frontend >500 KB dan Wrangler
+tidak dapat menulis log di luar workspace.
 
-
-
+Kontrak respons 9routers untuk chat completion belum diuji langsung. Production
+masih membutuhkan migration 0005, setup EmDash, secrets, autentikasi Wrangler,
+deploy Worker dan pengaitan domain. Jangan anggap layanan sudah aktif.
