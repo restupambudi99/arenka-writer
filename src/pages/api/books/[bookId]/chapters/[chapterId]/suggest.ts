@@ -46,8 +46,12 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
   if (!body) return jsonError("invalid_json", 400);
   const instruction = typeof body.instruction === "string" ? body.instruction.trim() : "";
   const action = body.action;
+  const requestedDraft = body.draft;
   if (!instruction || instruction.length > 8_000 || !["continue", "rewrite", "brainstorm", "critique"].includes(String(action))) {
     return jsonError("invalid_suggestion_request", 400);
+  }
+  if (requestedDraft !== undefined && (typeof requestedDraft !== "string" || requestedDraft.length > 200_000)) {
+    return jsonError("invalid_draft", 400);
   }
 
   const runtime = env as Env;
@@ -87,7 +91,7 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
   const dna = wizard.dna ?? {};
   const details = wizard.details ?? {};
   const voiceProfile = context.voice_profile.slice(0, 8_000);
-  const chapterContent = (context.chapter_content ?? "").slice(-contextLimit);
+  const chapterContent = (typeof requestedDraft === "string" ? requestedDraft : context.chapter_content ?? "").slice(-contextLimit);
   const actionInstruction = {
     continue: "Lanjutkan draf dengan menjaga kesinambungan dan gaya yang diberikan.",
     rewrite: "Usulkan penulisan ulang sesuai instruksi tanpa mengubah maksud inti.",
@@ -135,7 +139,7 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
     choices?: Array<{ message?: { content?: unknown } }>;
     usage?: { prompt_tokens?: unknown; completion_tokens?: unknown };
   };
-  try { payload = await upstream.json() as typeof payload; } catch {
+  try { payload = await readLimitedJson<typeof payload>(upstream, 256_000); } catch {
     await recordUsage(db, ownerId, bookId, model, "failed", null, null);
     return jsonError("ai_invalid_response", 502);
   }
@@ -153,6 +157,28 @@ export const POST: APIRoute = async ({ locals, params, request }) => {
 
 function safeTokenCount(value: unknown): number | null {
   return Number.isSafeInteger(value) && Number(value) >= 0 ? Number(value) : null;
+}
+
+async function readLimitedJson<T>(response: Response, limit: number): Promise<T> {
+  const declaredLength = Number(response.headers.get("content-length") ?? "0");
+  if (declaredLength > limit || !response.body) throw new Error("Invalid upstream response size.");
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > limit) {
+      await reader.cancel();
+      throw new Error("Upstream response is too large.");
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)) as T;
 }
 
 async function recordUsage(
@@ -173,4 +199,3 @@ async function recordUsage(
     return false;
   }
 }
-
