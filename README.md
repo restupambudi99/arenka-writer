@@ -33,9 +33,10 @@ npm run db:migrate:local
 ```
 
 Resource production D1 `arenka-writer`, R2 `arenka-writer-media`, dan KV `arenka-writer-session` dibuat di akun
-Cloudflare pemilik zone `arenka.biz.id`. Belum ada migration production atau
-deploy. Secret production dimasukkan lewat `wrangler secret put AI_API_KEY` dan
-`wrangler secret put AI_MODEL` setelah credential siap.
+Cloudflare pemilik zone `arenka.biz.id`. Migrasi domain 0001–0004 sudah ada di
+D1; migrasi 0005 masih perlu diterapkan sebelum endpoint saran AI dipakai.
+Worker dan subdomain belum dideploy. Secret produksi dimasukkan lewat
+`wrangler secret put AI_API_KEY` dan `wrangler secret put AI_MODEL`.
 
 ## API utama
 
@@ -45,6 +46,9 @@ owner. Mutasi memeriksa Origin dan ukuran JSON.
 - `/api/books` serta `/api/books/:bookId`: koleksi, metadata, arsip.
 - `/api/books/:bookId/outline`: simpan outline berversi dengan conflict cursor.
 - `/api/books/:bookId/chapters/*`: bab, revisi, susunan, dan persetujuan snapshot.
+- `/api/books/:bookId/chapters/:chapterId/suggest`: hasilkan saran AI untuk bab aktif.
+  Instruksi, blueprint, profil suara versi buku, dan bagian akhir draf dikirim ke
+  gateway hanya ketika endpoint dipanggil; hasil tidak disimpan otomatis.
 - `/api/books/:bookId/preview`: data preview dari revisi aktif/disetujui.
 - `/api/books/:bookId/export`: buat PDF dari revisi yang disetujui, simpan D1/R2.
 - `/api/exports/:exportId`: unduh ulang dengan pemeriksaan owner.
@@ -52,10 +56,15 @@ owner. Mutasi memeriksa Origin dan ukuran JSON.
 
 ## Pemeriksaan dan batas
 
-`npm run typecheck` (33 file) dan `npm run build` berhasil. Build memperingatkan
-chunk frontend >500 KB; Wrangler juga mencatat EPERM pada file log di luar
-workspace tanpa menggagalkan build. Chat AI, kuota/ledger, dan pemeriksaan
-kontrak gateway belum selesai. Belum deploy.
+Endpoint saran membatasi setiap akun hingga 4 permintaan per menit dan 30 per
+hari UTC. Pemakaian dicatat di `ai_usage` menggunakan jumlah token yang
+dikembalikan gateway; bila gateway tidak menyertakannya, nilainya kosong. Batas
+ini mengatur jumlah permintaan, bukan biaya token.
+
+`npm run typecheck` dan `npm run build` berhasil. Build memperingatkan chunk
+frontend >500 KB dan Wrangler tidak dapat menulis log di luar workspace, namun
+build selesai. UI saran AI, migrasi 0005 production, secret produksi, setup
+EmDash production, dan deploy masih belum selesai.
 
 
 
