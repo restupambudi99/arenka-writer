@@ -1,0 +1,41 @@
+name: Deploy Arenka Writer
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arenka-writer-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      CLOUDFLARE_ACCOUNT_ID: df5ba4fe4d3e63a428fec0550589eb8e
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      AI_API_KEY: ${{ secrets.AI_API_KEY }}
+      AI_MODEL: ${{ secrets.AI_MODEL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.4
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Bootstrap Worker and attach AI secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$AI_API_KEY"
+          test -n "$AI_MODEL"
+          node --input-type=module -e 'import fs from "node:fs"; const p="dist/server/wrangler.json"; const c=JSON.parse(fs.readFileSync(p,"utf8")); delete c.secrets; fs.writeFileSync(p,JSON.stringify(c,null,2));'
+          npx wrangler deploy --config dist/server/wrangler.json
+          printf '%s' "$AI_API_KEY" | npx wrangler secret put AI_API_KEY --config dist/server/wrangler.json
+          printf '%s' "$AI_MODEL" | npx wrangler secret put AI_MODEL --config dist/server/wrangler.json
