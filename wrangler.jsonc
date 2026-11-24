@@ -16,6 +16,9 @@
       "migrations_dir": "migrations"
     }
   ],
+  "kv_namespaces": [
+    { "binding": "SESSION", "id": "7de5d82ed9d44a08991ddd17ec7c71e0" }
+  ],
   "r2_buckets": [
     { "binding": "MEDIA", "bucket_name": "arenka-writer-media" }
   ],
@@ -25,6 +28,9 @@
   "exports": {
     "EmDashRoom": { "type": "durable-object", "storage": "sqlite" }
   },
+  "routes": [
+    { "pattern": "writer.arenka.biz.id", "custom_domain": true }
+  ],
   "triggers": { "crons": ["* * * * *"] },
   "secrets": { "required": ["AI_API_KEY", "AI_MODEL"] }
 }
