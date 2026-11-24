@@ -24,10 +24,6 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
     if (typeof body.purpose !== "string" || body.purpose.trim().length > 2_000) return jsonError("invalid_purpose", 400);
     fields.push("purpose = ?"); values.push(body.purpose.trim());
   }
-  if (body.position !== undefined) {
-    if (!Number.isInteger(body.position) || Number(body.position) < 0 || Number(body.position) > 10_000) return jsonError("invalid_position", 400);
-    fields.push("position = ?"); values.push(Number(body.position));
-  }
   if (fields.length === 0) return jsonError("no_changes", 400);
   fields.push("updated_at = CURRENT_TIMESTAMP");
   try {
@@ -54,6 +50,9 @@ export const PUT: APIRoute = async ({ locals, params, request }) => {
   if (body.expectedCurrentRevisionId !== null && typeof body.expectedCurrentRevisionId !== "string") {
     return jsonError("invalid_revision_cursor", 400);
   }
+  if (body.source !== undefined && body.source !== "manual" && body.source !== "ai_suggestion") {
+    return jsonError("invalid_revision_source", 400);
+  }
   const db = (env as Env).DB;
   const chapter = await db.prepare(
     "SELECT id, current_revision_id FROM chapters WHERE id = ? AND book_id = ? AND owner_id = ?",
@@ -67,8 +66,8 @@ export const PUT: APIRoute = async ({ locals, params, request }) => {
   const now = new Date().toISOString();
   try {
     const batch = await db.batch([
-      db.prepare("INSERT INTO chapter_revisions (id, owner_id, chapter_id, revision_number, content, source) VALUES (?, ?, ?, ?, ?, 'manual')")
-        .bind(revisionId, ownerId, chapterId, Number(revisionNumber?.next ?? 1), body.content),
+      db.prepare("INSERT INTO chapter_revisions (id, owner_id, chapter_id, revision_number, content, source) VALUES (?, ?, ?, ?, ?, ?)")
+        .bind(revisionId, ownerId, chapterId, Number(revisionNumber?.next ?? 1), body.content, body.source ?? "manual"),
       db.prepare("UPDATE chapters SET current_revision_id = ?, approved_revision_id = NULL, approval_status = 'draft', updated_at = ? WHERE id = ? AND book_id = ? AND owner_id = ? AND current_revision_id IS ?")
         .bind(revisionId, now, chapterId, bookId, ownerId, body.expectedCurrentRevisionId),
       db.prepare("UPDATE books SET updated_at = ? WHERE id = ? AND owner_id = ?")
@@ -84,4 +83,3 @@ export const PUT: APIRoute = async ({ locals, params, request }) => {
   }
   return privateJson({ revisionId, revisionNumber: Number(revisionNumber?.next ?? 1) }, 201);
 };
-
