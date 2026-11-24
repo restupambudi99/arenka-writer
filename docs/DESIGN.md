@@ -1,6 +1,6 @@
 # Arenka Writer — Rancangan Antarmuka MVP
 
-Status: implementasi bertahap, 2026-11-23.
+Status: implementasi bertahap, 2026-11-24.
 
 Rancangan ini memakai kebutuhan yang terlihat pada pemetaan antarmuka sebagai
 masukan. Nama, teks, aset, tata letak, dan komponen Arenka harus orisinal.
@@ -11,7 +11,7 @@ masukan. Nama, teks, aset, tata letak, dan komponen Arenka harus orisinal.
 - Navigasi kontekstual buku: Blueprint, Outline, Naskah, Preview.
 - Panel sekunder buku: Sumber, Riset, Catatan, Konsistensi.
 - Menu akun: profil dan keluar. Paket, referral, komunitas, serta CMS berada
-di luar MVP awal.
+  di luar MVP awal.
 
 ## Layar dan aksi
 
@@ -77,10 +77,18 @@ mengarahkan penulis ke workspace untuk meninjau dan melanjutkan.
 Astro + EmDash berjalan sebagai aplikasi server Cloudflare. Data domain memakai
 D1 dan file memakai R2. Owner API berasal dari session EmDash; mutasi memeriksa
 Origin dan data buku selalu dibatasi berdasarkan owner. Wizard lima tahap
-menyimpan metadata blueprint ke D1 di setiap tahap. Workspace mendukung bab,
-revisi manual, riwayat, pemulihan sebagai revisi baru, dan pengurutan bab.
+menyimpan metadata blueprint ke D1. Outline berversi, bab, revisi manual,
+riwayat, pemulihan sebagai revisi baru, pengurutan bab, persetujuan, preview,
+dan ekspor PDF privat sudah tersedia.
 
-Belum tersedia rich text, generasi naskah AI, UI pengaturan model, Preview/PDF,
-kuota/ledger AI, atau pemeriksaan kontrak gateway 9routers. Belum ada deploy
-atau migrasi D1 remote.
+Workspace menyediakan dialog saran AI dengan empat aksi: lanjutkan, tulis ulang,
+brainstorm, dan kritik. Setelah pengguna menekan tombol permintaan, server
+mengirim instruksi, blueprint terkait, profil suara yang dipatok pada buku, dan
+hingga 20.000 karakter akhir draf ke 9routers. Hasil tetap terpisah sampai
+penulis menerapkannya dan menyimpan revisi. Batas saat ini 4 request per menit
+dan 30 per hari UTC per akun. Kontrak gateway belum diuji langsung.
 
+Audit browser lokal menggunakan data sintetis memverifikasi wizard, outline,
+pembuatan bab, preview, persetujuan, dan unduhan PDF. Pengiriman AI tidak
+dilakukan. Production migration 0005, setup EmDash, secrets, autentikasi CLI,
+deploy, serta domain belum tersedia.
