@@ -31,6 +31,24 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
+      - name: Apply EmDash database migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          status="$(npx emdash migrate --status --wrangler-config wrangler.jsonc 2>&1)" || { printf '%s\n' "$status"; exit 1; }
+          printf '%s\n' "$status"
+          fingerprint="$(printf '%s\n' "$status" | sed -n 's/^Target fingerprint: //p' | tail -n 1)"
+          test -n "$fingerprint"
+          lock_id="$(printf '%s\n' "$status" | sed -n 's/^Migration lock: held since .* (id \(.*\))$/\1/p' | tail -n 1)"
+          if [ -n "$lock_id" ]; then
+            if [ "$lock_id" != "1795507574959" ]; then
+              echo "Unexpected active migration lock; refusing automatic takeover."
+              exit 1
+            fi
+            npx emdash migrate --wrangler-config wrangler.jsonc --take-over-lock "$lock_id" --expected-target-fingerprint "$fingerprint"
+          else
+            npx emdash migrate --wrangler-config wrangler.jsonc --expected-target-fingerprint "$fingerprint"
+          fi
       - name: Bootstrap Worker and attach AI secrets
         shell: bash
         run: |
