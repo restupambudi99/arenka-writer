@@ -1,6 +1,9 @@
 name: Deploy Arenka Writer
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
