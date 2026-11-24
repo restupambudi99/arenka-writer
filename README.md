@@ -32,7 +32,7 @@ Terapkan migration berurutan. Konfigurasi lokal:
 npm run db:migrate:local
 ```
 
-Resource production `arenka-writer` dan `arenka-writer-media` dibuat di akun
+Resource production D1 `arenka-writer`, R2 `arenka-writer-media`, dan KV `arenka-writer-session` dibuat di akun
 Cloudflare pemilik zone `arenka.biz.id`. Belum ada migration production atau
 deploy. Secret production dimasukkan lewat `wrangler secret put AI_API_KEY` dan
 `wrangler secret put AI_MODEL` setelah credential siap.
@@ -56,5 +56,6 @@ owner. Mutasi memeriksa Origin dan ukuran JSON.
 chunk frontend >500 KB; Wrangler juga mencatat EPERM pada file log di luar
 workspace tanpa menggagalkan build. Chat AI, kuota/ledger, dan pemeriksaan
 kontrak gateway belum selesai. Belum deploy.
+
 
 
