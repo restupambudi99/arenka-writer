@@ -23,6 +23,7 @@ Terakhir diperbarui: 2026-11-24
 - [x] UI koleksi buku, pencarian/filter, arsip/pulihkan, profil suara multi-versi, wizard blueprint lima tahap, outline versi, workspace, riwayat revisi, preview PDF, persetujuan bab, dan ekspor R2.
 - [x] API domain dengan owner session, same-origin mutation, validasi ukuran JSON, validasi owner, dan konflik revisi/outline.
 - [x] PDF Workers-compatible dari revisi yang sudah disetujui; source revision IDs dicatat D1, berkas privat di R2, unduh ulang memeriksa owner.
+- [x] Endpoint saran AI per bab, hanya untuk buku milik pengguna, hasil tidak disimpan otomatis, 4 permintaan/menit dan 30/hari UTC per akun, serta pencatatan usage gateway.
 - [x] `.dev.vars` lokal diabaikan Git; nilai key tidak dikirim ke gateway.
 - [x] `npm run typecheck` lulus tanpa error/warning/hint (33 file).
 - [x] `npm run build` lulus; peringatan bundle frontend >500 KB dan Wrangler log di luar workspace masih ada.
@@ -31,11 +32,13 @@ Terakhir diperbarui: 2026-11-24
 ## Berikutnya
 
 - [x] Terapkan migration D1 0001–0004 ke database baru; migration 0002 sekarang aditif agar tabel revisi tidak diganti. Migration tracker D1 sudah diselaraskan.
+- [ ] Terapkan migration 0005 batas permintaan AI ke D1 production sebelum fitur AI dirilis.
 - [ ] Verifikasi EmDash migrasi/setup di Cloudflare; jangan menimpa resource D1 lain.
-- [ ] Set secret AI production jika kredensial sudah disiapkan; verifikasi kontrak gateway sebelum chat aktif.
-- [ ] Deploy Worker dan custom domain `writer.arenka.biz.id`, lalu smoke check. Wrangler CLI tidak terautentikasi (token expired); upaya `wrangler login` sedang menunggu OAuth callback.
+- [ ] Tambahkan UI usulan AI di workspace, termasuk penjelasan data buku yang dikirim saat pengguna meminta saran.
+- [ ] Set secret AI production dan verifikasi kontrak gateway sebelum mengaktifkan UI.
+- [ ] Deploy Worker dan custom domain `writer.arenka.biz.id`, lalu smoke check. Wrangler CLI tidak terautentikasi; tidak ada Worker Arenka Writer atau domain tersebut saat audit Cloudflare.
 - [ ] Lengkapi duplikasi/arsip profil suara dan kontrol penamaan bab.
-- [ ] Rancang kuota/rate limit/ledger sebelum chat AI dibuka.
+- [x] Tambahkan batas permintaan atomik dan catatan usage AI; batas jumlah permintaan bukan kuota biaya token.
 - [ ] Lanjutkan audit security/privacy dan batas ukuran/retensi ekspor.
 - [ ] Pecah bundel admin/editor setelah fungsi stabil.
 
