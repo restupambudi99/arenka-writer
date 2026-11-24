@@ -34,9 +34,8 @@ npm run db:migrate:local
 
 Resource production D1 `arenka-writer`, R2 `arenka-writer-media`, dan KV
 `arenka-writer-session` sudah dibuat di akun Cloudflare pemilik zone
-`arenka.biz.id`. Migrasi D1 0001–0004 telah diterapkan; migration 0005 masih
-perlu diterapkan sebelum endpoint saran AI dirilis. Worker dan subdomain belum
-dideploy. Secret produksi dimasukkan lewat `wrangler secret put AI_API_KEY`
+`arenka.biz.id`. Migrasi D1 0001–0005 telah diterapkan dan diverifikasi. Worker dan subdomain
+belum dideploy. Secret produksi dimasukkan lewat `wrangler secret put AI_API_KEY`
 dan `wrangler secret put AI_MODEL`.
 
 ## API utama
