@@ -20,9 +20,13 @@ export const GET: APIRoute = async ({ locals, params, url }) => {
   if (!Number.isInteger(requestedLimit)) return jsonError("invalid_limit", 400);
   const limit = Math.min(Math.max(requestedLimit, 1), 50);
   const rows = await db.prepare(
-    `SELECT id, revision_number, source, restored_from_revision_id, created_at, length(content) AS content_length
-     FROM chapter_revisions WHERE chapter_id = ? AND owner_id = ?
-     ORDER BY revision_number DESC LIMIT ?`,
+    `SELECT r.id, r.revision_number, CASE WHEN l.revision_id IS NOT NULL THEN 'restore' ELSE r.source END AS source,
+      l.restored_from_revision_id, r.created_at,
+      length(r.content) AS content_length
+     FROM chapter_revisions r LEFT JOIN revision_restore_links l
+      ON l.revision_id = r.id AND l.chapter_id = r.chapter_id AND l.owner_id = r.owner_id
+     WHERE r.chapter_id = ? AND r.owner_id = ?
+     ORDER BY r.revision_number DESC LIMIT ?`,
   ).bind(chapterId, ownerId, limit).all<{
     id: string;
     revision_number: number;
