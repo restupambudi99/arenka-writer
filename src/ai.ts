@@ -43,7 +43,8 @@ export async function requestChatCompletion(
       Authorization: `Bearer ${env.AI_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ model: env.AI_MODEL, messages, stream: false }),
+    body: JSON.stringify({ model: env.AI_MODEL, messages, stream: false, max_tokens: 2_000 }),
+    signal: AbortSignal.timeout(45_000),
   });
 }
 
