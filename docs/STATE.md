@@ -35,10 +35,10 @@ Terakhir diperbarui: 2026-11-24
 
 ## Sisa sebelum rilis produksi
 
-- [ ] Terapkan migration 0005 batas permintaan AI ke D1 production.
+- [x] Terapkan migration D1 0005 batas permintaan AI ke production; tabel dan tracker migration telah diverifikasi via Cloudflare API.
 - [ ] Verifikasi dan selesaikan setup/migrasi EmDash production tanpa menimpa resource D1 lain.
 - [ ] Set secret AI production dan verifikasi format request/response gateway 9routers. Jangan kirim manuskrip pengguna untuk tes tanpa permintaan eksplisit.
-- [ ] Wrangler CLI belum terautentikasi. Inventory Cloudflare terakhir tidak menunjukkan Worker Arenka Writer atau custom domain `writer.arenka.biz.id`. Deploy dan smoke test masih perlu dilakukan setelah autentikasi tersedia.
+- [ ] Wrangler CLI belum terautentikasi. Dry-run bundle berhasil (sekitar 19,7 MB), tetapi API deployment belum menerima bundle. Inventory Cloudflare tidak menunjukkan Worker Arenka Writer atau custom domain `writer.arenka.biz.id`. Deploy dan smoke test masih perlu dilakukan.
 - [ ] Audit tambahan retensi/ukuran ekspor dan pecah bundle editor/admin setelah fungsi stabil.
 - [ ] Uji pemulihan revisi end-to-end di browser belum berhasil dikonfirmasi pada sesi audit ini.
 
